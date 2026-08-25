@@ -1,0 +1,6 @@
+# GitHub Linguist Language Detection
+*.ps1 linguist-detectable=false
+*.ps1 linguist-vendored=true
+
+# Auto-detect text files and normalize line endings
+* text=auto
