@@ -30,10 +30,7 @@ public final class ChatUtils extends JavaPlugin {
             // 3. Olay dinleyicilerini (Listeners) kaydet
             registerListeners();
 
-            // 4. Komutları bağlı oyuncuların istemcilerine (Client) senkronize et
-            syncCommandsWithClients();
-
-            // 5. Konsola bilgilendirme mesajı gönder
+            // 4. Konsola bilgilendirme mesajı gönder
             Bukkit.getConsoleSender().sendMessage("§a[ChatUtils] Eklenti aktif edildi.");
         } catch (Throwable t) {
             getLogger().severe("ChatUtils baslatilirken bir hata olustu: " + t.getMessage());
@@ -98,22 +95,6 @@ public final class ChatUtils extends JavaPlugin {
                     dynamicCmd.setTabCompleter((org.bukkit.command.TabCompleter) executor);
                 }
                 commandMap.register(getDescription().getName().toLowerCase(), dynamicCmd);
-            } catch (Throwable ignored) {
-            }
-        }
-    }
-
-    public void syncCommandsWithClients() {
-        try {
-            java.lang.reflect.Method syncCommands = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
-            syncCommands.setAccessible(true);
-            syncCommands.invoke(Bukkit.getServer());
-        } catch (Throwable ignored) {
-        }
-
-        for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers()) {
-            try {
-                player.updateCommands();
             } catch (Throwable ignored) {
             }
         }
