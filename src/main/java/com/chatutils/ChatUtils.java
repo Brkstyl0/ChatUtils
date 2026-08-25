@@ -29,7 +29,10 @@ public final class ChatUtils extends JavaPlugin {
         // 3. Olay dinleyicilerini (Listeners) kaydet
         registerListeners();
 
-        // 4. Konsola sade bilgilendirme mesajı gönder
+        // 4. Komutları bağlı oyuncuların istemcilerine (Client) senkronize et
+        syncCommandsWithClients();
+
+        // 5. Konsola sade bilgilendirme mesajı gönder
         Bukkit.getConsoleSender().sendMessage("§a[ChatUtils] Eklenti aktif edildi.");
     }
 
@@ -71,6 +74,38 @@ public final class ChatUtils extends JavaPlugin {
             if (executor instanceof org.bukkit.command.TabCompleter) {
                 cmd.setTabCompleter((org.bukkit.command.TabCompleter) executor);
             }
+        } else {
+            // Dinamik CommandMap kaydı (Reload veya PlugMan yüklemeleri için)
+            try {
+                java.lang.reflect.Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+                commandMapField.setAccessible(true);
+                org.bukkit.command.CommandMap commandMap = (org.bukkit.command.CommandMap) commandMapField.get(Bukkit.getServer());
+
+                java.lang.reflect.Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, org.bukkit.plugin.Plugin.class);
+                constructor.setAccessible(true);
+                PluginCommand dynamicCmd = constructor.newInstance(name, this);
+                if (executor instanceof org.bukkit.command.CommandExecutor) {
+                    dynamicCmd.setExecutor((org.bukkit.command.CommandExecutor) executor);
+                }
+                if (executor instanceof org.bukkit.command.TabCompleter) {
+                    dynamicCmd.setTabCompleter((org.bukkit.command.TabCompleter) executor);
+                }
+                commandMap.register(getDescription().getName().toLowerCase(), dynamicCmd);
+            } catch (Throwable ignored) {}
+        }
+    }
+
+    public void syncCommandsWithClients() {
+        try {
+            java.lang.reflect.Method syncCommands = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
+            syncCommands.setAccessible(true);
+            syncCommands.invoke(Bukkit.getServer());
+        } catch (Throwable ignored) {}
+
+        for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers()) {
+            try {
+                player.updateCommands();
+            } catch (Throwable ignored) {}
         }
     }
 
