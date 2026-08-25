@@ -105,8 +105,10 @@ chat-cleared-broadcast: "&a&l[!] &eSohbet &f{staff} &etarafından temizlendi."
 broadcast-usage: "&eKullanım: &6/duyuru <mesaj>"
 broadcast-format:
   - "&8&m--------------------------------------------------"
-  - "&6&l[DUYURU] &7({staff})"
-  - "&f{message}"
+  - " &e&l⭐ &6&l&nSUNUCU DUYURUSU&r &e&l⭐"
+  - ""
+  - "  &f&l{message}"
+  - ""
   - "&8&m--------------------------------------------------"
 
 # Süre Birimleri (Türkçe)

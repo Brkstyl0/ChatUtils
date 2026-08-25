@@ -14,11 +14,11 @@ broadcast:
   sound-pitch: 1.2
   # Duyuru yapıldığında ekranda Title (Başlık) çıksın mı?
   show-title: true
-  title-top: "&6&l[DUYURU]"
-  title-bottom: "&f{message}"
+  title-top: "&6&l⭐ &e&lDUYURU &6&l⭐"
+  title-bottom: "&f&l{message}"
   title-fade-in: 10
-  title-stay: 80
-  title-fade-out: 15
+  title-stay: 100
+  title-fade-out: 20
 
 # Sohbet temizleme (/cc) ayarları
 clearchat:
