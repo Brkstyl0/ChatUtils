@@ -26,24 +26,36 @@ public class ConfigManager {
     }
 
     public void load() {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdirs();
+        }
+
         // config.yml
-        plugin.saveDefaultConfig();
-        plugin.reloadConfig();
-        this.config = plugin.getConfig();
+        try {
+            plugin.saveDefaultConfig();
+            plugin.reloadConfig();
+            this.config = plugin.getConfig();
+        } catch (Exception e) {
+            plugin.getLogger().warning("config.yml yuklenirken hata: " + e.getMessage());
+        }
 
         // messages.yml
         messagesFile = new File(plugin.getDataFolder(), "messages.yml");
         if (!messagesFile.exists()) {
-            plugin.saveResource("messages.yml", false);
+            try {
+                plugin.saveResource("messages.yml", false);
+            } catch (Exception ignored) {}
         }
         this.messages = YamlConfiguration.loadConfiguration(messagesFile);
 
         // Eksik anahtarları default messages.yml'den tamamla
-        InputStream defStream = plugin.getResource("messages.yml");
-        if (defStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, StandardCharsets.UTF_8));
-            this.messages.setDefaults(defConfig);
-        }
+        try {
+            InputStream defStream = plugin.getResource("messages.yml");
+            if (defStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defStream, StandardCharsets.UTF_8));
+                this.messages.setDefaults(defConfig);
+            }
+        } catch (Exception ignored) {}
     }
 
     public FileConfiguration getConfig() {

@@ -19,21 +19,26 @@ public final class ChatUtils extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // 1. Yapılandırma ve veri yöneticilerini başlat
-        this.configManager = new ConfigManager(this);
-        this.punishmentManager = new PunishmentManager(this);
+        try {
+            // 1. Yapılandırma ve veri yöneticilerini başlat
+            this.configManager = new ConfigManager(this);
+            this.punishmentManager = new PunishmentManager(this);
 
-        // 2. Komutları kaydet
-        registerCommands();
+            // 2. Komutları kaydet
+            registerCommands();
 
-        // 3. Olay dinleyicilerini (Listeners) kaydet
-        registerListeners();
+            // 3. Olay dinleyicilerini (Listeners) kaydet
+            registerListeners();
 
-        // 4. Komutları bağlı oyuncuların istemcilerine (Client) senkronize et
-        syncCommandsWithClients();
+            // 4. Komutları bağlı oyuncuların istemcilerine (Client) senkronize et
+            syncCommandsWithClients();
 
-        // 5. Konsola sade bilgilendirme mesajı gönder
-        Bukkit.getConsoleSender().sendMessage("§a[ChatUtils] Eklenti aktif edildi.");
+            // 5. Konsola bilgilendirme mesajı gönder
+            Bukkit.getConsoleSender().sendMessage("§a[ChatUtils] Eklenti aktif edildi.");
+        } catch (Throwable t) {
+            getLogger().severe("ChatUtils baslatilirken bir hata olustu: " + t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     @Override
@@ -79,9 +84,11 @@ public final class ChatUtils extends JavaPlugin {
             try {
                 java.lang.reflect.Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
                 commandMapField.setAccessible(true);
-                org.bukkit.command.CommandMap commandMap = (org.bukkit.command.CommandMap) commandMapField.get(Bukkit.getServer());
+                org.bukkit.command.CommandMap commandMap = (org.bukkit.command.CommandMap) commandMapField
+                        .get(Bukkit.getServer());
 
-                java.lang.reflect.Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, org.bukkit.plugin.Plugin.class);
+                java.lang.reflect.Constructor<PluginCommand> constructor = PluginCommand.class
+                        .getDeclaredConstructor(String.class, org.bukkit.plugin.Plugin.class);
                 constructor.setAccessible(true);
                 PluginCommand dynamicCmd = constructor.newInstance(name, this);
                 if (executor instanceof org.bukkit.command.CommandExecutor) {
@@ -91,7 +98,8 @@ public final class ChatUtils extends JavaPlugin {
                     dynamicCmd.setTabCompleter((org.bukkit.command.TabCompleter) executor);
                 }
                 commandMap.register(getDescription().getName().toLowerCase(), dynamicCmd);
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
         }
     }
 
@@ -100,12 +108,14 @@ public final class ChatUtils extends JavaPlugin {
             java.lang.reflect.Method syncCommands = Bukkit.getServer().getClass().getDeclaredMethod("syncCommands");
             syncCommands.setAccessible(true);
             syncCommands.invoke(Bukkit.getServer());
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
 
         for (org.bukkit.entity.Player player : Bukkit.getOnlinePlayers()) {
             try {
                 player.updateCommands();
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
         }
     }
 

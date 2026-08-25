@@ -1,6 +1,0 @@
-name: ChatUtils
-version: '1.0.0'
-main: com.chatutils.ChatUtils
-api-version: '1.20'
-description: 'ChatUtils'
-folia-supported: true
