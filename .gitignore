@@ -1,8 +1,20 @@
+# Build & Dependency Artifacts
 target/
 lib/
+*.jar
+
+# Build Scripts
+build.ps1
+*.ps1
+
+# IDE & Editor files
 .idea/
 *.iml
 .vscode/
 .settings/
 .project
 .classpath
+
+# OS files
+Thumbs.db
+.DS_Store
