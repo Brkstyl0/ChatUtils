@@ -27,10 +27,15 @@ public class PunishmentManager {
     }
 
     public void loadData() {
+        if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdirs();
+        }
         dataFile = new File(plugin.getDataFolder(), "punishments.yml");
         if (!dataFile.exists()) {
             try {
-                dataFile.getParentFile().mkdirs();
+                if (dataFile.getParentFile() != null) {
+                    dataFile.getParentFile().mkdirs();
+                }
                 dataFile.createNewFile();
             } catch (IOException e) {
                 plugin.getLogger().severe("punishments.yml dosyasi olusturulamadi: " + e.getMessage());
@@ -218,9 +223,11 @@ public class PunishmentManager {
 
     private void saveDataAsync() {
         if (plugin.isEnabled()) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, this::saveData);
-        } else {
-            saveData();
+            try {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, this::saveData);
+                return;
+            } catch (Throwable ignored) {}
         }
+        saveData();
     }
 }

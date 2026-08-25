@@ -35,7 +35,13 @@ public final class ChatUtils extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Verileri diske kaydet
+        // 1. Bekleyen asenkron görevleri iptal et
+        Bukkit.getScheduler().cancelTasks(this);
+
+        // 2. Dinleyicileri (Listeners) kaldır
+        org.bukkit.event.HandlerList.unregisterAll(this);
+
+        // 3. Verileri diske kaydet
         if (punishmentManager != null) {
             punishmentManager.saveData();
         }
@@ -45,76 +51,26 @@ public final class ChatUtils extends JavaPlugin {
     }
 
     private void registerCommands() {
-        // /mute
-        PluginCommand muteCmd = getCommand("mute");
-        if (muteCmd != null) {
-            MuteCommand muteExecutor = new MuteCommand(this);
-            muteCmd.setExecutor(muteExecutor);
-            muteCmd.setTabCompleter(muteExecutor);
-        }
+        registerCommand("mute", new MuteCommand(this));
+        registerCommand("unmute", new UnmuteCommand(this));
+        registerCommand("ban", new BanCommand(this));
+        registerCommand("tempban", new TempbanCommand(this));
+        registerCommand("unban", new UnbanCommand(this));
+        registerCommand("chat", new ChatCommand(this));
+        registerCommand("clearchat", new ClearChatCommand(this));
+        registerCommand("duyuru", new BroadcastCommand(this));
+        registerCommand("chatutils", new ChatUtilsCommand(this));
+    }
 
-        // /unmute
-        PluginCommand unmuteCmd = getCommand("unmute");
-        if (unmuteCmd != null) {
-            UnmuteCommand unmuteExecutor = new UnmuteCommand(this);
-            unmuteCmd.setExecutor(unmuteExecutor);
-            unmuteCmd.setTabCompleter(unmuteExecutor);
-        }
-
-        // /ban
-        PluginCommand banCmd = getCommand("ban");
-        if (banCmd != null) {
-            BanCommand banExecutor = new BanCommand(this);
-            banCmd.setExecutor(banExecutor);
-            banCmd.setTabCompleter(banExecutor);
-        }
-
-        // /tempban
-        PluginCommand tempbanCmd = getCommand("tempban");
-        if (tempbanCmd != null) {
-            TempbanCommand tempbanExecutor = new TempbanCommand(this);
-            tempbanCmd.setExecutor(tempbanExecutor);
-            tempbanCmd.setTabCompleter(tempbanExecutor);
-        }
-
-        // /unban
-        PluginCommand unbanCmd = getCommand("unban");
-        if (unbanCmd != null) {
-            UnbanCommand unbanExecutor = new UnbanCommand(this);
-            unbanCmd.setExecutor(unbanExecutor);
-            unbanCmd.setTabCompleter(unbanExecutor);
-        }
-
-        // /chat
-        PluginCommand chatCmd = getCommand("chat");
-        if (chatCmd != null) {
-            ChatCommand chatExecutor = new ChatCommand(this);
-            chatCmd.setExecutor(chatExecutor);
-            chatCmd.setTabCompleter(chatExecutor);
-        }
-
-        // /clearchat
-        PluginCommand clearCmd = getCommand("clearchat");
-        if (clearCmd != null) {
-            ClearChatCommand clearExecutor = new ClearChatCommand(this);
-            clearCmd.setExecutor(clearExecutor);
-            clearCmd.setTabCompleter(clearExecutor);
-        }
-
-        // /duyuru
-        PluginCommand broadcastCmd = getCommand("duyuru");
-        if (broadcastCmd != null) {
-            BroadcastCommand broadcastExecutor = new BroadcastCommand(this);
-            broadcastCmd.setExecutor(broadcastExecutor);
-            broadcastCmd.setTabCompleter(broadcastExecutor);
-        }
-
-        // /chatutils
-        PluginCommand mainCmd = getCommand("chatutils");
-        if (mainCmd != null) {
-            ChatUtilsCommand mainExecutor = new ChatUtilsCommand(this);
-            mainCmd.setExecutor(mainExecutor);
-            mainCmd.setTabCompleter(mainExecutor);
+    private void registerCommand(String name, Object executor) {
+        PluginCommand cmd = getCommand(name);
+        if (cmd != null) {
+            if (executor instanceof org.bukkit.command.CommandExecutor) {
+                cmd.setExecutor((org.bukkit.command.CommandExecutor) executor);
+            }
+            if (executor instanceof org.bukkit.command.TabCompleter) {
+                cmd.setTabCompleter((org.bukkit.command.TabCompleter) executor);
+            }
         }
     }
 
