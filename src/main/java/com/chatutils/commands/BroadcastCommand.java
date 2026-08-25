@@ -57,11 +57,15 @@ public class BroadcastCommand implements CommandExecutor, TabCompleter {
         float soundPitch = (float) plugin.getConfigManager().getConfig().getDouble("broadcast.sound-pitch", 1.2);
 
         boolean showTitle = plugin.getConfigManager().getConfig().getBoolean("broadcast.show-title", true);
-        String titleTop = ColorUtil.colorize(plugin.getConfigManager().getConfig().getString("broadcast.title-top", "&6&l[DUYURU]"));
-        String titleBottom = ColorUtil.colorize(plugin.getConfigManager().getConfig().getString("broadcast.title-bottom", "&eSohbete bakınız!"));
+        String rawTitleTop = plugin.getConfigManager().getConfig().getString("broadcast.title-top", "&6&l[DUYURU]");
+        String rawTitleBottom = plugin.getConfigManager().getConfig().getString("broadcast.title-bottom", "&f{message}");
+
+        String titleTop = ColorUtil.colorize(rawTitleTop.replace("{staff}", sender.getName()).replace("{message}", coloredMessage));
+        String titleBottom = ColorUtil.colorize(rawTitleBottom.replace("{staff}", sender.getName()).replace("{message}", coloredMessage));
+
         int fadeIn = plugin.getConfigManager().getConfig().getInt("broadcast.title-fade-in", 10);
-        int stay = plugin.getConfigManager().getConfig().getInt("broadcast.title-stay", 60);
-        int fadeOut = plugin.getConfigManager().getConfig().getInt("broadcast.title-fade-out", 10);
+        int stay = plugin.getConfigManager().getConfig().getInt("broadcast.title-stay", 80);
+        int fadeOut = plugin.getConfigManager().getConfig().getInt("broadcast.title-fade-out", 15);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (soundName != null && !soundName.equalsIgnoreCase("NONE")) {

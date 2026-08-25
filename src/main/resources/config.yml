@@ -15,10 +15,10 @@ broadcast:
   # Duyuru yapıldığında ekranda Title (Başlık) çıksın mı?
   show-title: true
   title-top: "&6&l[DUYURU]"
-  title-bottom: "&eSohbete bakınız!"
+  title-bottom: "&f{message}"
   title-fade-in: 10
-  title-stay: 60
-  title-fade-out: 10
+  title-stay: 80
+  title-fade-out: 15
 
 # Sohbet temizleme (/cc) ayarları
 clearchat:
