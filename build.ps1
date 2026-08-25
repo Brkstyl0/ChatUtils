@@ -80,12 +80,11 @@ Write-Host "Kaynak dosyalari paketleniyor..." -ForegroundColor Green
 Copy-Item -Recurse -Force "src\main\resources\*" $buildDir
 
 # JAR olustur
-$targetJar = "ChatUtils-1.0.0.jar"
+$targetJar = "ChatUtils.jar"
 & $jar --create --file $targetJar -C $buildDir .
-Copy-Item -Force $targetJar "target\ChatUtils-1.0.0.jar"
-Copy-Item -Force $targetJar "ChatUtils.jar"
+Copy-Item -Force $targetJar "target\ChatUtils.jar"
 
 Write-Host "=========================================" -ForegroundColor Cyan
 Write-Host "  TEBRIKLER! DERLEME BASARILI!           " -ForegroundColor Green
-Write-Host "  Olusturulan JAR: $targetJar ve ChatUtils.jar" -ForegroundColor Yellow
+Write-Host "  Olusturulan JAR: $targetJar            " -ForegroundColor Yellow
 Write-Host "=========================================" -ForegroundColor Cyan
