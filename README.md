@@ -1,4 +1,4 @@
-# 🛠️ ChatUtils - Minecraft Sohbet & Ceza Yönetimi Eklentisi (26.2 Uyumlu)
+# 🛠️ ChatUtils - Minecraft Sohbet & Ceza Yönetimi Eklentisi
 
 Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştirilmiş, hafif, yüksek performanslı ve %100 Türkçe sohbet ve ceza yönetim eklentisi.
 
