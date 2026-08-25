@@ -1,0 +1,118 @@
+# =================================================== #
+#                 CHATUTILS MESSAGES                  #
+#            %100 Özelleştirilebilir Türkçe Mesajlar  #
+# =================================================== #
+
+prefix: "&8[&6ChatUtils&8] &r"
+
+no-permission: "&cBu komutu kullanmak için gerekli yetkiniz yok!"
+player-not-found: "&cBelirtilen oyuncu bulunamadı veya hiç giriş yapmamış!"
+only-players: "&cBu komut yalnızca oyuncular tarafından kullanılabilir!"
+invalid-time: "&cGeçersiz süre formatı! Örnekler: 10m, 1h, 1d, 7d veya kalici"
+already-muted: "&cBu oyuncu zaten susturulmuş! Kalan süre: &e{remaining}"
+not-muted: "&cBu oyuncu şu anda susturulmuş değil!"
+already-banned: "&cBu oyuncu zaten sunucudan yasaklanmış!"
+not-banned: "&cBu oyuncu şu anda yasaklı değil!"
+
+# Reload mesajı
+plugin-reloaded: "&aChatUtils yapılandırması ve verileri başarıyla yenilendi! &7({time}ms)"
+
+# Mute Mesajları
+mute-usage: "&eKullanım: &6/mute <oyuncu> <süre> [sebep]\n&7Örnek: &f/mute Steve 30m Küfür\n&7Süre birimleri: &es (saniye), m (dakika), h (saat), d (gün) veya kalici"
+unmute-usage: "&eKullanım: &6/unmute <oyuncu>"
+
+mute-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&c&l[MUTE] &eBir oyuncu susturuldu!"
+  - " &8» &eSusturulan: &c{target}"
+  - " &8» &eSusturan: &f{staff}"
+  - " &8» &eSüre: &a{duration}"
+  - " &8» &eSebep: &f{reason}"
+  - "&8&m--------------------------------------------------"
+
+unmute-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&a&l[UNMUTE] &eBir oyuncunun susturması kaldırıldı!"
+  - " &8» &eOyuncu: &a{target}"
+  - " &8» &eYetkili: &f{staff}"
+  - "&8&m--------------------------------------------------"
+
+muted-chat-attempt:
+  - "&8&m--------------------------------------------------"
+  - "&c&l[!] &eŞu anda susturulmuş durumdasınız!"
+  - " &8» &eSusturan Yetkili: &f{staff}"
+  - " &8» &eKalan Süre: &c{remaining}"
+  - " &8» &eSebep: &f{reason}"
+  - "&8&m--------------------------------------------------"
+
+# Ban Mesajları
+ban-usage: "&eKullanım: &6/ban <oyuncu> [süre/kalici] [sebep]\n&7Örnek: &f/ban Steve 1d Hile kullanımı\n&7Örnek: &f/ban Steve kalici Griefing"
+tempban-usage: "&eKullanım: &6/tempban <oyuncu> <süre> [sebep]\n&7Örnek: &f/tempban Steve 7d Reklam"
+unban-usage: "&eKullanım: &6/unban <oyuncu>"
+
+ban-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&4&l[BAN] &eBir oyuncu sunucudan uzaklaştırıldı!"
+  - " &8» &eYasaklanan: &c{target}"
+  - " &8» &eYasaklayan: &f{staff}"
+  - " &8» &eSüre: &a{duration}"
+  - " &8» &eSebep: &f{reason}"
+  - "&8&m--------------------------------------------------"
+
+unban-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&a&l[UNBAN] &eBir oyuncunun sunucu yasağı kaldırıldı!"
+  - " &8» &eOyuncu: &a{target}"
+  - " &8» &eYetkili: &f{staff}"
+  - "&8&m--------------------------------------------------"
+
+# Ban Ekranı (Kick & Login Screen)
+ban-screen:
+  - "&4&lSUNUCUDAN UZAKLAŞTIRILDINIZ!"
+  - ""
+  - "&8» &eYasaklayan Yetkili: &f{staff}"
+  - "&8» &eYasaklanma Sebebi: &f{reason}"
+  - "&8» &eKalan Süre: &c{remaining}"
+  - "&8» &eYasaklanma Tarihi: &7{date}"
+  - ""
+  - "&7Haksız yasaklandığınızı düşünüyorsanız"
+  - "&7itiraz için yetkililerimize başvurabilirsiniz."
+
+# Sohbet Kilitleme / Açma Mesajları
+chat-locked-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&c&l[SOHBET KİLİTLENDİ]"
+  - "&eSohbet &f{staff} &etarafından &ckapatılmıştır&e."
+  - "&7(Sadece yetkili personeller konuşabilir)"
+  - "&8&m--------------------------------------------------"
+
+chat-unlocked-broadcast:
+  - "&8&m--------------------------------------------------"
+  - "&a&l[SOHBET AÇILDI]"
+  - "&eSohbet &f{staff} &etarafından &atekrardan açılmıştır&e."
+  - "&7(Tüm oyuncular sohbete yazabilir)"
+  - "&8&m--------------------------------------------------"
+
+chat-is-locked-warning: "&c[!] Sohbet şu anda kilitlidir! Yalnızca yetkililer mesaj gönderebilir."
+chat-status-locked: "&eSohbet durumu: &cKİLİTLİ"
+chat-status-unlocked: "&eSohbet durumu: &aAÇIK"
+chat-usage: "&eKullanım: &6/chat <kapat|aç|toggle|durum|temizle>"
+
+# Sohbet Temizleme Mesajları
+chat-cleared-broadcast: "&a&l[!] &eSohbet &f{staff} &etarafından temizlendi."
+
+# Duyuru Mesajları
+broadcast-usage: "&eKullanım: &6/duyuru <mesaj>"
+broadcast-format:
+  - "&8&m--------------------------------------------------"
+  - "&6&l[DUYURU] &7({staff})"
+  - "&f{message}"
+  - "&8&m--------------------------------------------------"
+
+# Süre Birimleri (Türkçe)
+time-permanent: "Kalıcı"
+time-days: "{days} gün {hours} saat"
+time-hours: "{hours} saat {minutes} dakika"
+time-minutes: "{minutes} dakika {seconds} saniye"
+time-seconds: "{seconds} saniye"
+time-expired: "Süresi Doldu"

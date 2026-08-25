@@ -1,0 +1,103 @@
+name: ChatUtils
+version: '1.0.0'
+main: com.chatutils.ChatUtils
+api-version: '1.20'
+description: 'ChatUtils'
+
+commands:
+  mute:
+    description: Bir oyuncuyu süreli veya kalıcı susturur.
+    permission: chatutils.mute
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> <süre> [sebep]
+  unmute:
+    description: Bir oyuncunun susturmasını kaldırır.
+    permission: chatutils.unmute
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu>
+  ban:
+    description: Bir oyuncuyu sunucudan kalıcı olarak yasaklar.
+    permission: chatutils.ban
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> [süre/kalici] [sebep]
+  tempban:
+    description: Bir oyuncuyu sunucudan süreli olarak yasaklar.
+    permission: chatutils.tempban
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> <süre> [sebep]
+  unban:
+    description: Bir oyuncunun sunucu yasağını kaldırır.
+    permission: chatutils.unban
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu>
+  chat:
+    description: Sohbeti kilitler, açar veya durumunu yönetir.
+    aliases: [sohbet, chatlock]
+    permission: chatutils.chat.toggle
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <kapat|aç|toggle|durum>
+  clearchat:
+    description: Sohbeti tüm oyuncular için temizler.
+    aliases: [cc, sohbettemizle, chatclear]
+    permission: chatutils.chat.clear
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command>
+  duyuru:
+    description: Tüm sunucuya şık formatta ve ses efektli duyuru gönderir.
+    aliases: [broadcast, bc, announce]
+    permission: chatutils.broadcast
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <mesaj>
+  chatutils:
+    description: ChatUtils ana yönetim ve yenileme komutu.
+    aliases: [cutils]
+    permission: chatutils.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> reload
+
+permissions:
+  chatutils.admin:
+    description: Tüm ChatUtils komutlarına tam erişim sağlar.
+    default: op
+    children:
+      chatutils.mute: true
+      chatutils.unmute: true
+      chatutils.ban: true
+      chatutils.tempban: true
+      chatutils.unban: true
+      chatutils.chat.toggle: true
+      chatutils.chat.clear: true
+      chatutils.chat.bypass: true
+      chatutils.broadcast: true
+      chatutils.reload: true
+
+  chatutils.mute:
+    description: /mute komutunu kullanma yetkisi.
+    default: op
+  chatutils.unmute:
+    description: /unmute komutunu kullanma yetkisi.
+    default: op
+  chatutils.ban:
+    description: /ban komutunu kullanma yetkisi.
+    default: op
+  chatutils.tempban:
+    description: /tempban komutunu kullanma yetkisi.
+    default: op
+  chatutils.unban:
+    description: /unban komutunu kullanma yetkisi.
+    default: op
+  chatutils.chat.toggle:
+    description: /chat kapat ve /chat aç komutlarını kullanma yetkisi.
+    default: op
+  chatutils.chat.clear:
+    description: /clearchat (/cc) komutunu kullanma yetkisi.
+    default: op
+  chatutils.chat.bypass:
+    description: Sohbet kilitliyken veya susturma korumalarında mesaj yazabilme yetkisi.
+    default: op
+  chatutils.broadcast:
+    description: /duyuru komutunu kullanma yetkisi.
+    default: op
+  chatutils.reload:
+    description: /chatutils reload komutunu kullanma yetkisi.
+    default: op

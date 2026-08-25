@@ -1,0 +1,67 @@
+# =================================================== #
+#                  CHATUTILS CONFIG                   #
+#         Gelişmiş Sohbet ve Ceza Eklentisi           #
+# =================================================== #
+
+# Tarih ve saat formatı
+date-format: "dd.MM.yyyy HH:mm:ss"
+
+# Duyuru (/duyuru) ayarları
+broadcast:
+  # Duyuru gönderildiğinde çalınacak ses (Kapatmak için 'NONE' yapabilirsiniz)
+  sound: "BLOCK_NOTE_BLOCK_PLING"
+  sound-volume: 1.0
+  sound-pitch: 1.2
+  # Duyuru yapıldığında ekranda Title (Başlık) çıksın mı?
+  show-title: true
+  title-top: "&6&l[DUYURU]"
+  title-bottom: "&eSohbete bakınız!"
+  title-fade-in: 10
+  title-stay: 60
+  title-fade-out: 10
+
+# Sohbet temizleme (/cc) ayarları
+clearchat:
+  # Sohbette kaç boş satır gönderilsin
+  blank-lines: 100
+  # Temizlendikten sonra çalınacak ses
+  sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+
+# Ceza ayarları
+punishments:
+  # Mute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-mute: true
+  # Unmute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-unmute: true
+  # Ban atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-ban: true
+  # Unban atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-unban: true
+  # Varsayılan susturma süresi (eğer süre girilmezse, örn: 15m)
+  default-mute-duration: "15m"
+  # Varsayılan susturma sebebi
+  default-mute-reason: "Kurallara uymamak"
+  # Varsayılan yasaklama sebebi
+  default-ban-reason: "Sunucu kurallarını ihlal etmek"
+
+# Tab tamamlama için önerilen varsayılan sebepler
+suggested-reasons:
+  mute:
+    - "Küfür / Argo"
+    - "Spam / Flood"
+    - "Reklam"
+    - "Hakaret"
+    - "Ailevi Değerlere Küfür"
+    - "Dini / Milli Değerlere Hakaret"
+    - "Siyaset"
+    - "Yetkiliye Saygısızlık"
+    - "Oyun Düzenini Bozma"
+    - "Hile İtirafı"
+  ban:
+    - "Hile / 3. Parti Yazılım"
+    - "Griefing / Yapılara Zarar Verme"
+    - "Dolandırıcılık"
+    - "Bug / Hata Kötüye Kullanımı"
+    - "Ağır Küfür / Hakaret"
+    - "Sunucu / Site Reklamı"
+    - "Yetkiliyi Yanıltma"
