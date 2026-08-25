@@ -44,7 +44,6 @@ commands:
     usage: /<command>
   duyuru:
     description: Tüm sunucuya şık formatta ve ses efektli duyuru gönderir.
-    aliases: [broadcast, bc, announce]
     permission: chatutils.broadcast
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <mesaj>
