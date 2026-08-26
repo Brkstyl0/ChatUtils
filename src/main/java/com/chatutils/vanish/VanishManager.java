@@ -15,6 +15,7 @@ public class VanishManager {
 
     private final ChatUtils plugin;
     private final Set<UUID> vanishedPlayers = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, Boolean> previousFlightState = new ConcurrentHashMap<>();
     private BukkitTask actionBarTask;
 
     public VanishManager(ChatUtils plugin) {
@@ -28,6 +29,7 @@ public class VanishManager {
         UUID uuid = player.getUniqueId();
         if (vanish) {
             vanishedPlayers.add(uuid);
+            previousFlightState.put(uuid, player.getAllowFlight());
 
             // Tüm oyunculardan (görme yetkisi olmayanlardan) gizle
             for (Player other : Bukkit.getOnlinePlayers()) {
@@ -60,11 +62,12 @@ public class VanishManager {
                 other.showPlayer(plugin, player);
             }
 
-            // Uçuşu sıfırla (eğer hayatta kalma modundaysa ve kalıcı uçuş yetkisi yoksa)
+            // Uçuşu sıfırla (eğer vanish öncesinde uçuş izni yoksa kapat)
+            boolean wasAllowedFlightBefore = Boolean.TRUE.equals(previousFlightState.remove(uuid));
             if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
-                if (!player.hasPermission("chatutils.fly")) {
-                    player.setAllowFlight(false);
+                if (!wasAllowedFlightBefore) {
                     player.setFlying(false);
+                    player.setAllowFlight(false);
                 }
             }
 
@@ -153,8 +156,16 @@ public class VanishManager {
                 for (Player other : Bukkit.getOnlinePlayers()) {
                     other.showPlayer(plugin, player);
                 }
+                boolean wasAllowedFlightBefore = Boolean.TRUE.equals(previousFlightState.remove(uuid));
+                if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+                    if (!wasAllowedFlightBefore) {
+                        player.setFlying(false);
+                        player.setAllowFlight(false);
+                    }
+                }
             }
         }
         vanishedPlayers.clear();
+        previousFlightState.clear();
     }
 }
