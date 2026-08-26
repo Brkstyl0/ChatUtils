@@ -22,6 +22,9 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
 | **/ban** | `/ban <oyuncu> [süre/kalici] [sebep]` | Oyuncuyu süreli veya kalıcı yasaklar (30 gün üstü ve kalıcı için perm gerekir). | `chatutils.ban` |
 | **/unban** | `/unban <oyuncu>` | Yasaklanan oyuncunun sunucu yasağını kaldırır. | `chatutils.unban` |
 | **/kick** | `/kick <oyuncu> [sebep]` | Oyuncuyu ban sanılmayacak özel bilgilendirici ekranla sunucudan atar. | `chatutils.kick` |
+| **/vanish** (`/v`) | `/vanish` veya `/v [on\|off\|oyuncu]` | İksirsiz ve parçacıksız, TAB ve dünyadan tamamen gizlenen profesyonel görünmezlik. | `chatutils.vanish` |
+| **/disguise** (`/d`) | `/disguise <isim> [rank]` | Oyuncunun skinini, ismini ve LuckPerms rütbesini gizler. | `chatutils.disguise` |
+| **/undisguise** (`/ud`) | `/undisguise` | Disguise modunu kaldırarak orijinal skin ve rütbeye geri döner. | `chatutils.undisguise` |
 | **/chat** | `/chat <kapat\|aç\|toggle\|durum\|temizle>` | Sohbeti kilitler, açar, durumunu gösterir veya temizler. | `chatutils.chat.toggle` |
 | **/clearchat** (`/cc`) | `/clearchat` veya `/cc` | İstemci sıkıştırmasını (Lunar/Badlion vb.) aşarak sohbeti herkes için temizler. | `chatutils.chat.clear` |
 | **/duyuru** (`/bc`) | `/duyuru <mesaj>` | Tüm sunucuya ses efektli ve şık çerçeveli duyuru yapar. | `chatutils.broadcast` |
@@ -43,6 +46,11 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
 - `chatutils.ban.permanent` : 30 günden uzun veya kalıcı ban atabilme yetkisi
 - `chatutils.unban` : Unban yetkisi
 - `chatutils.kick` : Kick (sunucudan atma) yetkisi
+- `chatutils.vanish` : `/vanish` (`/v`) komutunu kullanma yetkisi
+- `chatutils.vanish.see` : Görünmez yetkilileri görebilme yetkisi
+- `chatutils.vanish.other` : Başka yetkilileri vanish moduna alma yetkisi
+- `chatutils.disguise` : `/disguise` (`/d`) komutunu kullanma yetkisi
+- `chatutils.undisguise` : `/undisguise` (`/ud`) komutunu kullanma yetkisi
 - `chatutils.bypass.kick` : Kick komutundan muaf olma yetkisi
 - `chatutils.chat.toggle` : Sohbet kilitleme / açma yetkisi
 - `chatutils.chat.clear` : Sohbeti temizleme yetkisi (`/cc` / `/clearchat`)
@@ -56,40 +64,34 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
 
 ## ⚡ Öne Çıkan Özellikler
 
-1. **Gelişmiş Mute Sistemi**:
-   - `/mute Steve 30m Küfür` veya `/mute Steve 1d` veya `/mute Steve` şeklinde çalışır.
-   - `s` (saniye), `m` (dakika), `h` (saat), `d` (gün) veya `kalici` birimlerini destekler.
-   - Mute atıldığında sohbete kimin susturduğu, kime atıldığı, süresi ve alt satırda sebebi duyurulur.
-   - Susturulan oyuncu konuşmaya çalıştığında: Kalan süre, sebep ve susturan yetkili ekranda listelenir.
-   - **Akıllı Tab Tamamlama**: Oyuncu adı, popüler süreler (`5m`, `10m`, `30m`, `1h`, `1d`, `kalici`) ve popüler sebepler (`Küfür`, `Spam`, `Reklam`, `Hakaret`, vb.) otomatik listelenir.
+1. **İksirsiz Profesyonel Vanish (/vanish & /v)**:
+   - Görünmezlik iksiri kullanmaz; iksir parçacıkları, sesleri veya glitchleri kesinlikle oluşmaz.
+   - `hidePlayer` paket seviyesinde çalışarak yetkiliyi hem dünyadan hem de **TAB listesinden tamamen siler**.
+   - Yaratıklar hedef alamaz (no-aggro), yerdeki eşyalar çekilmez (no-pickup), basınç plakaları tetiklenmez.
+   - Sandıkları ve konteynerleri animasyonsuz ve ses çıkarmadan sessizce açar (`silent-containers`).
+   - Yetkiliye periyodik `[VANISH: AKTİF]` Action Bar HUD bildirimi ve uçuş izni verir.
 
-2. **Simple Voice Chat (/voicemute) Entegrasyonu**:
-   - Sunucuda **Simple Voice Chat** kurulu olduğunda otomatik bağlanır (Soft-Depend).
-   - `/voicemute Steve 1h Mikrofon basma` veya `/voicemute Steve kalici Troll` şeklinde süreli veya sınırsız olarak oyuncunun mikrofon ses paketlerini engeller.
-   - Susturulan oyuncu mikrofondan konuştuğunda sesi diğer oyunculara ve gruplara iletilmez; oyuncuya susturulduğunu bildiren bilgilendirici mesaj gönderilir.
-   - `/unvoicemute Steve` komutuyla ceza anında kaldırılabilir.
+2. **Disguise & LuckPerms Rank Entegrasyonu (/disguise & /d)**:
+   - Paper `PlayerProfile` API ile Mojang'dan asenkron skin çeker ve anında uygular.
+   - `/disguise <isim> [rank]` ile LuckPerms gruplarını (`lp editor` rütbelerini) otomatik tamamlar.
+   - Seçilen rank'ın prefix'ini ve adını sohbette/tabda uygular.
+   - `/undisguise` (`/ud`) ile orijinal profile ve rütbeye anında dönülür.
 
-3. **Birleşik Ban Sistemi & 30 Gün Koruması**:
+3. **Gelişmiş Mute & Simple Voice Chat Susturma**:
+   - Yazılı sohbet için süreli/kalıcı `/mute` ve `/unmute`.
+   - Simple Voice Chat mikrofonunu tamamen engelleyen `/voicemute` ve `/unvoicemute`.
+
+4. **Birleşik Ban Sistemi & 30 Gün Koruması**:
    - Süreli ve kalıcı banlar tek merkezden `/ban` komutu ile yönetilir.
-   - `chatutils.ban` yetkisine sahip yetkililer en fazla 30 güne kadar ban atabilir.
    - 30 günden uzun veya kalıcı banlar için `chatutils.ban.permanent` yetkisi gereklidir.
    - Özel Türkçe yasaklama ekranı (`ban-screen`) ile yetkili, sebep, kalan süre ve tarih gösterilir.
 
-4. **Gelişmiş Kick (Sunucudan Atma) Sistemi**:
+5. **Gelişmiş Kick (Sunucudan Atma) Sistemi**:
    - `/kick Steve Uygunsuz davranış` şeklinde kullanılır.
-   - Oyuncunun ekranında ban ile karıştırmasını engelleyen şık ve açıklayıcı Türkçe bilgilendirme ekranı (`kick-screen`) gösterilir (Tekrar bağlanabileceğini ve kurallara uyması gerektiğini bildirir).
-   - Sunucu genelinde şık duyuru mesajı (`kick-broadcast`) geçer (Sebep alt satırda yer alır).
+   - Özel açıklayıcı Türkçe bilgilendirme ekranı (`kick-screen`) gösterilir.
 
-5. **İstemci Dostu Sohbet Temizleme (Anti-Compacting)**:
-   - `/cc` veya `/clearchat` kullanıldığında Lunar Client, Badlion ve Vanilla istemcilerin boş satırları tek satıra sıkıştırmasını (compacting) önleyen görünmez varyasyonlu satır sistemi kullanılır.
-   - Komutu yazan yetkili dahil tüm oyuncuların sohbeti eksiksiz temizlenir.
+6. **İstemci Dostu Sohbet Temizleme (Anti-Compacting)**:
+   - `/cc` veya `/clearchat` kullanıldığında Lunar Client, Badlion ve Vanilla istemcilerin tek satıra sıkıştırmasını önleyen temizleme sistemi.
 
-6. **Özel Mesaj İzleme (Social Spy)**:
-   - `/msg` komutunu bozmadan/değiştirmeden dinler (`/msg`, `/tell`, `/w`, `/whisper`, `/r` vb.).
-   - `chatutils.socialspy` veya `chatutils.spy` yetkisine sahip yetkililer oyuncuların birbirleriyle olan özel mesajlaşmalarını anlık olarak formatlı şekilde izleyebilir.
-   - Susturulmuş (muted) oyuncuların özel mesaj atarak susturmayı delmesi engellenir.
-
-7. **Sıfır Yük & Kalıcı Veri Depolama**:
-   - Veriler `plugins/ChatUtils/punishments.yml` dosyasında asenkron ve güvenli şekilde saklanır.
-   - Sunucu yeniden başlatılsa bile cezalar kaybolmaz.
-   - `/chatutils reload` ile tüm dosyalar ve veriler anında yenilenir.
+7. **Özel Mesaj İzleme (Social Spy)**:
+   - `/msg` komutlarını dinleyerek yetkililere formatlı izleme olanağı sağlar.

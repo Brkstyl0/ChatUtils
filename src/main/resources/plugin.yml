@@ -3,7 +3,7 @@ version: '1.0.0'
 main: com.chatutils.ChatUtils
 api-version: '1.20'
 description: 'ChatUtils'
-softdepend: [voicechat]
+softdepend: [voicechat, LuckPerms]
 
 commands:
   mute:
@@ -43,6 +43,24 @@ commands:
     permission: chatutils.kick
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <oyuncu> [sebep]
+  vanish:
+    description: İksirsiz ve parçacıksız, TAB ve dünyadan tamamen gizlenen profesyonel görünmezlik.
+    aliases: [v]
+    permission: chatutils.vanish
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> [on|off|oyuncu]
+  disguise:
+    description: Oyuncunun skinini, ismini ve LuckPerms rütbesini gizler.
+    aliases: [d]
+    permission: chatutils.disguise
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <isim> [rank]
+  undisguise:
+    description: Disguise durumunu kaldırarak orijinal görünüm ve rütbeye döner.
+    aliases: [ud, und]
+    permission: chatutils.undisguise
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command>
   chat:
     description: Sohbeti kilitler, açar veya durumunu yönetir.
     aliases: [sohbet, chatlock]
@@ -81,6 +99,11 @@ permissions:
       chatutils.ban.permanent: true
       chatutils.unban: true
       chatutils.kick: true
+      chatutils.vanish: true
+      chatutils.vanish.see: true
+      chatutils.vanish.other: true
+      chatutils.disguise: true
+      chatutils.undisguise: true
       chatutils.chat.toggle: true
       chatutils.chat.clear: true
       chatutils.chat.bypass: true
@@ -116,6 +139,21 @@ permissions:
     default: op
   chatutils.kick:
     description: /kick komutunu kullanma yetkisi.
+    default: op
+  chatutils.vanish:
+    description: /vanish (/v) komutunu kullanma yetkisi.
+    default: op
+  chatutils.vanish.see:
+    description: Görünmez (vanished) yetkilileri görebilme ve TAB listesinde görme yetkisi.
+    default: op
+  chatutils.vanish.other:
+    description: Başka yetkilileri vanish'e alma/çıkarma yetkisi.
+    default: op
+  chatutils.disguise:
+    description: /disguise (/d) komutunu kullanma yetkisi.
+    default: op
+  chatutils.undisguise:
+    description: /undisguise (/ud) komutunu kullanma yetkisi.
     default: op
   chatutils.bypass.kick:
     description: /kick komutundan muaf olma yetkisi.

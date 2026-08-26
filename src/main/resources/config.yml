@@ -56,6 +56,33 @@ punishments:
   # Varsayılan atılma (kick) sebebi
   default-kick-reason: "Sunucu kurallarını ihlal etmek"
 
+# Vanish (/vanish & /v) ayarları
+vanish:
+  # Sandık, fıçı ve shulker kutularını sessiz ve animasyonsuz açma
+  silent-containers: true
+  # Vanish açıldığında sahte çıkış, kapatıldığında sahte giriş mesajı gönderilsin mi?
+  fake-announcements: true
+  # Yetkilinin ekranında Action Bar HUD çıksın mı?
+  actionbar-hud: true
+
+# Disguise (/disguise & /d) ayarları
+disguise:
+  # Tab tamamlamada önerilen popüler isimler
+  suggested-names:
+    - "Steve"
+    - "Alex"
+    - "GamerPro"
+    - "KralOyuncu"
+    - "Warrior"
+    - "Legend"
+  # LuckPerms yüklü olmadığında veya özel rank eşleştirmeleri için
+  custom-ranks:
+    oyuncu: "&7[Oyuncu] "
+    vip: "&a[VIP] "
+    vip+: "&a[VIP&6+&a] "
+    mvp: "&b[MVP] "
+    mvp+: "&b[MVP&c+&b] "
+
 # Tab tamamlama için önerilen varsayılan sebepler
 suggested-reasons:
   mute:

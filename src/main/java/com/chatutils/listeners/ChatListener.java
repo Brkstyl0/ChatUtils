@@ -62,6 +62,16 @@ public class ChatListener implements Listener {
             for (String line : warningLines) {
                 player.sendMessage(line);
             }
+            return;
+        }
+
+        // 3. Disguise Prefix ve İsim Desteği
+        if (plugin.getDisguiseManager().isDisguised(player)) {
+            String disguisedPrefix = plugin.getDisguiseManager().getDisguisedPrefix(player);
+            if (disguisedPrefix != null && !disguisedPrefix.isEmpty()) {
+                String coloredPrefix = com.chatutils.utils.ColorUtil.colorize(disguisedPrefix);
+                event.setFormat(coloredPrefix + "%1$s" + "§r: %2$s");
+            }
         }
     }
 

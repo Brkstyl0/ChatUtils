@@ -3,8 +3,11 @@ package com.chatutils;
 import com.chatutils.commands.*;
 import com.chatutils.config.ConfigManager;
 import com.chatutils.data.PunishmentManager;
+import com.chatutils.disguise.DisguiseManager;
 import com.chatutils.listeners.ChatListener;
 import com.chatutils.listeners.LoginListener;
+import com.chatutils.listeners.VanishListener;
+import com.chatutils.vanish.VanishManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,6 +17,8 @@ public final class ChatUtils extends JavaPlugin {
     private static ChatUtils instance;
     private ConfigManager configManager;
     private PunishmentManager punishmentManager;
+    private VanishManager vanishManager;
+    private DisguiseManager disguiseManager;
     private com.chatutils.hook.VoiceChatManager voiceChatManager;
 
     @Override
@@ -24,6 +29,8 @@ public final class ChatUtils extends JavaPlugin {
             // 1. Yapılandırma ve veri yöneticilerini başlat
             this.configManager = new ConfigManager(this);
             this.punishmentManager = new PunishmentManager(this);
+            this.vanishManager = new VanishManager(this);
+            this.disguiseManager = new DisguiseManager(this);
 
             // 2. Komutları kaydet
             registerCommands();
@@ -51,7 +58,15 @@ public final class ChatUtils extends JavaPlugin {
         // 2. Dinleyicileri (Listeners) kaldır
         org.bukkit.event.HandlerList.unregisterAll(this);
 
-        // 3. Verileri diske kaydet
+        // 3. Vanish ve Disguise temizlikleri
+        if (vanishManager != null) {
+            vanishManager.shutdown();
+        }
+        if (disguiseManager != null) {
+            disguiseManager.shutdown();
+        }
+
+        // 4. Verileri diske kaydet
         if (punishmentManager != null) {
             punishmentManager.saveData();
         }
@@ -68,6 +83,9 @@ public final class ChatUtils extends JavaPlugin {
         registerCommand("ban", new BanCommand(this));
         registerCommand("unban", new UnbanCommand(this));
         registerCommand("kick", new KickCommand(this));
+        registerCommand("vanish", new VanishCommand(this));
+        registerCommand("disguise", new DisguiseCommand(this));
+        registerCommand("undisguise", new UndisguiseCommand(this));
         registerCommand("chat", new ChatCommand(this));
         registerCommand("clearchat", new ClearChatCommand(this));
         registerCommand("duyuru", new BroadcastCommand(this));
@@ -110,6 +128,7 @@ public final class ChatUtils extends JavaPlugin {
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new ChatListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LoginListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new VanishListener(this), this);
     }
 
     public static ChatUtils getInstance() {
@@ -122,6 +141,14 @@ public final class ChatUtils extends JavaPlugin {
 
     public PunishmentManager getPunishmentManager() {
         return punishmentManager;
+    }
+
+    public VanishManager getVanishManager() {
+        return vanishManager;
+    }
+
+    public DisguiseManager getDisguiseManager() {
+        return disguiseManager;
     }
 
     public com.chatutils.hook.VoiceChatManager getVoiceChatManager() {

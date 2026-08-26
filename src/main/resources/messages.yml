@@ -57,6 +57,22 @@ voicemuted-attempt:
   - "&c[!] Sesli sohbet susturmanız aktif olduğu için sesiniz iletilmiyor! &8(&eKalan: &c{remaining}&8 | &eYetkili: &f{staff}&8)"
   - "&8» &7Sebep: &f{reason}"
 
+# Vanish Mesajları
+vanish-enabled: "&aGörünmezlik (Vanish) modu aktif edildi. &7(TAB ve dünyadan tamamen gizlendiniz)"
+vanish-disabled: "&cGörünmezlik (Vanish) modu devre dışı bırakıldı. &7(Tekrar görünürsünüz)"
+vanish-actionbar: "&a&l[VANISH: AKTİF] &7Diğer oyunculara ve TAB listesine tamamen gizlisiniz."
+vanish-cannot-damage: "&cGörünmez (vanish) modundayken oyunculara veya yaratıklara saldıramazsınız!"
+fake-quit: "&e{player} oyundan ayrıldı"
+fake-join: "&e{player} oyuna katıldı"
+
+# Disguise Mesajları
+disguise-usage: "&eKullanım: &6/disguise <isim> [rank]\n&7Örnek: &f/disguise Steve oyuncu\n&7Örnek: &f/disguise Alex vip"
+disguise-invalid-name: "&cGeçersiz oyuncu ismi! Yalnızca 3-16 karakter arası harf, sayı ve alt çizgi kullanılabilir."
+disguise-loading: "&e{name} adlı oyuncunun skini Mojang sunucularından çekiliyor, lütfen bekleyiniz..."
+disguise-success: "&aBaşarıyla &e{name} &aadlı oyuncunun görünümüne ve &e{rank} &arütbesine büründünüz!"
+not-disguised: "&cŞu anda herhangi bir disguise modunda değilsiniz!"
+undisguise-success: "&aDisguise modu kaldırıldı, orijinal görünümünüze ve rütbenize döndünüz."
+
 # Ban Mesajları
 ban-usage: "&eKullanım: &6/ban <oyuncu> [süre/kalici] [sebep]\n&7Örnek: &f/ban Steve 7d Hile kullanımı\n&7Örnek: &f/ban Steve kalici Griefing"
 ban-no-permanent-permission: "&c30 günden uzun veya kalıcı yasaklama uygulamak için &echatutils.ban.permanent &cyetkisine sahip olmalısınız! &7(En fazla 30 gün belirtebilirsiniz)"
