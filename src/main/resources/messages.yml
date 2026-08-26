@@ -11,6 +11,8 @@ only-players: "&cBu komut yalnızca oyuncular tarafından kullanılabilir!"
 invalid-time: "&cGeçersiz süre formatı! Örnekler: 10m, 1h, 1d, 7d veya kalici"
 already-muted: "&cBu oyuncu zaten susturulmuş! Kalan süre: &e{remaining}"
 not-muted: "&cBu oyuncu şu anda susturulmuş değil!"
+already-voicemuted: "&cBu oyuncu zaten sesli sohbetten susturulmuş! Kalan süre: &e{remaining}"
+not-voicemuted: "&cBu oyuncu şu anda sesli sohbetten susturulmuş değil!"
 already-banned: "&cBu oyuncu zaten sunucudan yasaklanmış!"
 not-banned: "&cBu oyuncu şu anda yasaklı değil!"
 
@@ -30,6 +32,29 @@ unmute-broadcast:
 
 muted-chat-attempt:
   - "&c&l[!] &eŞu anda susturulmuş durumdasınız! &8(&eKalan: &c{remaining}&8 | &eYetkili: &f{staff}&8)"
+  - "&8» &7Sebep: &f{reason}"
+
+# Voice Mute (Simple Voice Chat) Mesajları
+voicemute-usage: "&eKullanım: &6/voicemute <oyuncu> [süre/kalici] [sebep]\n&7Örnek: &f/voicemute Steve 1h Mikrofon basma\n&7Örnek: &f/voicemute Steve kalici Hakaret"
+voicemute-no-permanent-permission: "&c30 günden uzun veya kalıcı ses susturması uygulamak için &echatutils.voicemute.permanent &cyetkisine sahip olmalısınız! &7(En fazla 30 gün belirtebilirsiniz)"
+unvoicemute-usage: "&eKullanım: &6/unvoicemute <oyuncu>"
+
+voicemute-broadcast:
+  - "&c&l[VOICE MUTE] &e{target}&7 adlı oyuncu &f{staff} &7tarafından sesli sohbetten &e{duration} &7susturuldu."
+  - "&8» &7Sebep: &f{reason}"
+
+unvoicemute-broadcast:
+  - "&a&l[VOICE UNMUTE] &e{target}&7 adlı oyuncunun sesli sohbet susturması &f{staff} &7tarafından kaldırıldı."
+
+voicemuted-notify:
+  - "&c&l[!] &eSesli sohbetiniz &f{staff} &etarafından &c{duration} &esüreyle susturuldu!"
+  - "&8» &7Sebep: &f{reason}"
+
+unvoicemuted-notify:
+  - "&a&l[!] &eSesli sohbet susturmanız &f{staff} &etarafından kaldırıldı. Artık konuşabilirsiniz."
+
+voicemuted-attempt:
+  - "&c[!] Sesli sohbet susturmanız aktif olduğu için sesiniz iletilmiyor! &8(&eKalan: &c{remaining}&8 | &eYetkili: &f{staff}&8)"
   - "&8» &7Sebep: &f{reason}"
 
 # Ban Mesajları

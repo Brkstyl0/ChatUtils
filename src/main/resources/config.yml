@@ -33,6 +33,10 @@ punishments:
   broadcast-mute: true
   # Unmute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
   broadcast-unmute: true
+  # Voice Mute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-voicemute: true
+  # Unvoicemute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-unvoicemute: true
   # Ban atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
   broadcast-ban: true
   # Unban atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
@@ -41,8 +45,12 @@ punishments:
   broadcast-kick: true
   # Varsayılan susturma süresi (eğer süre girilmezse, örn: 15m)
   default-mute-duration: "15m"
+  # Varsayılan sesli susturma süresi
+  default-voicemute-duration: "15m"
   # Varsayılan susturma sebebi
   default-mute-reason: "Kurallara uymamak"
+  # Varsayılan sesli susturma sebebi
+  default-voicemute-reason: "Mikrofonu kötüye kullanmak"
   # Varsayılan yasaklama sebebi
   default-ban-reason: "Sunucu kurallarını ihlal etmek"
   # Varsayılan atılma (kick) sebebi
@@ -61,6 +69,13 @@ suggested-reasons:
     - "Yetkiliye Saygısızlık"
     - "Oyun Düzenini Bozma"
     - "Hile İtirafı"
+  voicemute:
+    - "Mikrofon Basma / Kulak Patlatma"
+    - "Seste Küfür / Hakaret"
+    - "Rahatsız Edici Ses / Soundpad"
+    - "Arka Plan Gürültüsü / Cızırtı"
+    - "Seste Reklam"
+    - "Yetkiliyi Bölme / Rahatsız Etme"
   ban:
     - "Hile / 3. Parti Yazılım"
     - "Griefing / Yapılara Zarar Verme"

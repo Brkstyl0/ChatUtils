@@ -2,5 +2,6 @@ package com.chatutils.data;
 
 public enum PunishmentType {
     MUTE,
-    BAN
+    BAN,
+    VOICE_MUTE
 }

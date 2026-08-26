@@ -16,6 +16,7 @@ public class PunishmentManager {
     private final ChatUtils plugin;
     private final Map<String, Punishment> activeMutes = new ConcurrentHashMap<>();
     private final Map<String, Punishment> activeBans = new ConcurrentHashMap<>();
+    private final Map<String, Punishment> activeVoiceMutes = new ConcurrentHashMap<>();
     
     private boolean chatLocked = false;
     private File dataFile;
@@ -45,6 +46,7 @@ public class PunishmentManager {
 
         activeMutes.clear();
         activeBans.clear();
+        activeVoiceMutes.clear();
 
         // Mutes yükle
         ConfigurationSection muteSec = dataConfig.getConfigurationSection("mutes");
@@ -70,6 +72,18 @@ public class PunishmentManager {
             }
         }
 
+        // Voice Mutes yükle
+        ConfigurationSection voiceMuteSec = dataConfig.getConfigurationSection("voicemutes");
+        if (voiceMuteSec != null) {
+            for (String key : voiceMuteSec.getKeys(false)) {
+                Map<String, Object> values = voiceMuteSec.getConfigurationSection(key).getValues(false);
+                Punishment p = Punishment.fromMap(values);
+                if (!p.isExpired()) {
+                    activeVoiceMutes.put(p.getTargetName().toLowerCase(Locale.ROOT), p);
+                }
+            }
+        }
+
         this.chatLocked = dataConfig.getBoolean("chat-locked", false);
     }
 
@@ -88,6 +102,12 @@ public class PunishmentManager {
         for (Map.Entry<String, Punishment> entry : activeBans.entrySet()) {
             if (!entry.getValue().isExpired()) {
                 config.set("bans." + entry.getKey(), entry.getValue().toMap());
+            }
+        }
+
+        for (Map.Entry<String, Punishment> entry : activeVoiceMutes.entrySet()) {
+            if (!entry.getValue().isExpired()) {
+                config.set("voicemutes." + entry.getKey(), entry.getValue().toMap());
             }
         }
 
@@ -249,6 +269,120 @@ public class PunishmentManager {
     private void cleanExpiredBans() {
         boolean changed = false;
         Iterator<Map.Entry<String, Punishment>> it = activeBans.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Punishment> entry = it.next();
+            if (entry.getValue().isExpired()) {
+                it.remove();
+                changed = true;
+            }
+        }
+        if (changed) saveDataAsync();
+    }
+
+    // --- VOICE MUTE METODLARI ---
+
+    public void addVoiceMute(Punishment punishment) {
+        if (punishment == null || punishment.getTargetName() == null) return;
+        String key = punishment.getTargetName().trim().toLowerCase(Locale.ROOT);
+        activeVoiceMutes.put(key, punishment);
+        saveDataAsync();
+    }
+
+    public boolean removeVoiceMute(String targetName) {
+        if (targetName == null) return false;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
+        Punishment removed = activeVoiceMutes.remove(key);
+        if (removed == null) {
+            Iterator<Map.Entry<String, Punishment>> it = activeVoiceMutes.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Punishment> entry = it.next();
+                if (entry.getValue().getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    removed = entry.getValue();
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        if (removed != null) {
+            saveDataAsync();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removeVoiceMute(UUID targetUuid) {
+        if (targetUuid == null) return false;
+        Iterator<Map.Entry<String, Punishment>> it = activeVoiceMutes.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Punishment> entry = it.next();
+            if (targetUuid.equals(entry.getValue().getTargetUuid())) {
+                it.remove();
+                saveDataAsync();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Punishment getVoiceMute(String targetName) {
+        if (targetName == null) return null;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
+        Punishment p = activeVoiceMutes.get(key);
+        if (p == null) {
+            for (Punishment punishment : activeVoiceMutes.values()) {
+                if (punishment.getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    p = punishment;
+                    break;
+                }
+            }
+        }
+        if (p != null) {
+            if (p.isExpired()) {
+                activeVoiceMutes.remove(key);
+                saveDataAsync();
+                return null;
+            }
+            return p;
+        }
+        return null;
+    }
+
+    public Punishment getVoiceMute(UUID targetUuid) {
+        if (targetUuid == null) return null;
+        for (Map.Entry<String, Punishment> entry : activeVoiceMutes.entrySet()) {
+            Punishment punishment = entry.getValue();
+            if (targetUuid.equals(punishment.getTargetUuid())) {
+                if (punishment.isExpired()) {
+                    activeVoiceMutes.remove(entry.getKey());
+                    saveDataAsync();
+                    return null;
+                }
+                return punishment;
+            }
+        }
+        return null;
+    }
+
+    public boolean isVoiceMuted(String targetName) {
+        return getVoiceMute(targetName) != null;
+    }
+
+    public boolean isVoiceMuted(UUID targetUuid) {
+        return getVoiceMute(targetUuid) != null;
+    }
+
+    public Set<String> getVoiceMutedPlayerNames() {
+        cleanExpiredVoiceMutes();
+        Set<String> names = new LinkedHashSet<>();
+        for (Punishment p : activeVoiceMutes.values()) {
+            names.add(p.getTargetName());
+        }
+        return names;
+    }
+
+    private void cleanExpiredVoiceMutes() {
+        boolean changed = false;
+        Iterator<Map.Entry<String, Punishment>> it = activeVoiceMutes.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Punishment> entry = it.next();
             if (entry.getValue().isExpired()) {

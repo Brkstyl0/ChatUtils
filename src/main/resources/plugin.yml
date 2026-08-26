@@ -3,6 +3,7 @@ version: '1.0.0'
 main: com.chatutils.ChatUtils
 api-version: '1.20'
 description: 'ChatUtils'
+softdepend: [voicechat]
 
 commands:
   mute:
@@ -13,6 +14,18 @@ commands:
   unmute:
     description: Bir oyuncunun susturmasını kaldırır.
     permission: chatutils.unmute
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu>
+  voicemute:
+    description: Bir oyuncuyu sesli sohbetten (Simple Voice Chat) süreli veya kalıcı susturur.
+    aliases: [vcmute, vmute]
+    permission: chatutils.voicemute
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> [süre/kalici] [sebep]
+  unvoicemute:
+    description: Bir oyuncunun sesli sohbet susturmasını kaldırır.
+    aliases: [vcunmute, unvmute]
+    permission: chatutils.unvoicemute
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <oyuncu>
   ban:
@@ -61,6 +74,9 @@ permissions:
     children:
       chatutils.mute: true
       chatutils.unmute: true
+      chatutils.voicemute: true
+      chatutils.voicemute.permanent: true
+      chatutils.unvoicemute: true
       chatutils.ban: true
       chatutils.ban.permanent: true
       chatutils.unban: true
@@ -79,6 +95,15 @@ permissions:
     default: op
   chatutils.unmute:
     description: /unmute komutunu kullanma yetkisi.
+    default: op
+  chatutils.voicemute:
+    description: /voicemute komutunu kullanma yetkisi (Maksimum 30 güne kadar süreli susturma).
+    default: op
+  chatutils.voicemute.permanent:
+    description: 30 günden uzun veya kalıcı ses susturması atabilme yetkisi.
+    default: op
+  chatutils.unvoicemute:
+    description: /unvoicemute komutunu kullanma yetkisi.
     default: op
   chatutils.ban:
     description: /ban komutunu kullanma yetkisi (Maksimum 30 güne kadar süreli ban).

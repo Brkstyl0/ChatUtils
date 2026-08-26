@@ -14,6 +14,7 @@ public final class ChatUtils extends JavaPlugin {
     private static ChatUtils instance;
     private ConfigManager configManager;
     private PunishmentManager punishmentManager;
+    private com.chatutils.hook.VoiceChatManager voiceChatManager;
 
     @Override
     public void onEnable() {
@@ -30,7 +31,11 @@ public final class ChatUtils extends JavaPlugin {
             // 3. Olay dinleyicilerini (Listeners) kaydet
             registerListeners();
 
-            // 4. Konsola bilgilendirme mesajı gönder
+            // 4. Simple Voice Chat entegrasyonunu başlat
+            this.voiceChatManager = new com.chatutils.hook.VoiceChatManager(this);
+            this.voiceChatManager.init();
+
+            // 5. Konsola bilgilendirme mesajı gönder
             Bukkit.getConsoleSender().sendMessage("§a[ChatUtils] Eklenti aktif edildi.");
         } catch (Throwable t) {
             getLogger().severe("ChatUtils baslatilirken bir hata olustu: " + t.getMessage());
@@ -58,6 +63,8 @@ public final class ChatUtils extends JavaPlugin {
     private void registerCommands() {
         registerCommand("mute", new MuteCommand(this));
         registerCommand("unmute", new UnmuteCommand(this));
+        registerCommand("voicemute", new VoiceMuteCommand(this));
+        registerCommand("unvoicemute", new UnvoicemuteCommand(this));
         registerCommand("ban", new BanCommand(this));
         registerCommand("unban", new UnbanCommand(this));
         registerCommand("kick", new KickCommand(this));
@@ -115,5 +122,9 @@ public final class ChatUtils extends JavaPlugin {
 
     public PunishmentManager getPunishmentManager() {
         return punishmentManager;
+    }
+
+    public com.chatutils.hook.VoiceChatManager getVoiceChatManager() {
+        return voiceChatManager;
     }
 }
