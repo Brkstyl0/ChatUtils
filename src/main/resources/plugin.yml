@@ -70,6 +70,8 @@ permissions:
       chatutils.chat.bypass: true
       chatutils.bypass.kick: true
       chatutils.broadcast: true
+      chatutils.socialspy: true
+      chatutils.spy: true
       chatutils.reload: true
 
   chatutils.mute:
@@ -104,6 +106,12 @@ permissions:
     default: op
   chatutils.broadcast:
     description: /duyuru komutunu kullanma yetkisi.
+    default: op
+  chatutils.socialspy:
+    description: Oyuncular arasındaki özel mesajlaşmaları (/msg) görme yetkisi.
+    default: op
+  chatutils.spy:
+    description: chatutils.socialspy ile aynı yetki (kısa alias).
     default: op
   chatutils.reload:
     description: /chatutils reload komutunu kullanma yetkisi.

@@ -43,6 +43,7 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
 - `chatutils.chat.clear` : Sohbeti temizleme yetkisi (`/cc` / `/clearchat`)
 - `chatutils.chat.bypass` : Sohbet kilitliyken veya susturma korumalarında mesaj yazabilme yetkisi
 - `chatutils.broadcast` : `/duyuru` kullanma yetkisi
+- `chatutils.socialspy` : Oyuncular arasındaki özel mesajlaşmaları (/msg) izleme yetkisi
 - `chatutils.reload` : `/chatutils reload` komutu yetkisi
 - `chatutils.admin` : Tüm ChatUtils komutlarına ve izinlerine tam yetki (Wildcard)
 
@@ -72,7 +73,12 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
    - `/cc` veya `/clearchat` kullanıldığında Lunar Client, Badlion ve Vanilla istemcilerin boş satırları tek satıra sıkıştırmasını (compacting) önleyen görünmez varyasyonlu satır sistemi kullanılır.
    - Komutu yazan yetkili dahil tüm oyuncuların sohbeti eksiksiz temizlenir.
 
-5. **Sıfır Yük & Kalıcı Veri Depolama**:
+5. **Özel Mesaj İzleme (Social Spy)**:
+   - `/msg` komutunu bozmadan/değiştirmeden dinler (`/msg`, `/tell`, `/w`, `/whisper`, `/r` vb.).
+   - `chatutils.socialspy` veya `chatutils.spy` yetkisine sahip yetkililer oyuncuların birbirleriyle olan özel mesajlaşmalarını anlık olarak formatlı şekilde izleyebilir.
+   - Susturulmuş (muted) oyuncuların özel mesaj atarak susturmayı delmesi engellenir.
+
+6. **Sıfır Yük & Kalıcı Veri Depolama**:
    - Veriler `plugins/ChatUtils/punishments.yml` dosyasında asenkron ve güvenli şekilde saklanır.
    - Sunucu yeniden başlatılsa bile cezalar kaybolmaz.
    - `/chatutils reload` ile tüm dosyalar ve veriler anında yenilenir.

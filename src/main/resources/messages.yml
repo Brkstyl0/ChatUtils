@@ -100,6 +100,9 @@ broadcast-format:
   - ""
   - "&8&m--------------------------------------------------"
 
+# Özel Mesaj İzleme (Social Spy)
+socialspy-format: "&8[&cSPY&8] &e{sender} &8» &e{receiver}&8: &f{message}"
+
 # Süre Birimleri (Türkçe)
 time-permanent: "Kalıcı"
 time-days: "{days} gün {hours} saat"
