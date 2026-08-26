@@ -129,6 +129,7 @@ public final class ChatUtils extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ChatListener(this), this);
         Bukkit.getPluginManager().registerEvents(new LoginListener(this), this);
         Bukkit.getPluginManager().registerEvents(new VanishListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new com.chatutils.listeners.DisguiseListener(this), this);
     }
 
     public static ChatUtils getInstance() {

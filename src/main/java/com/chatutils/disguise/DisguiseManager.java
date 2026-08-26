@@ -8,7 +8,14 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.UUID;
@@ -22,6 +29,7 @@ public class DisguiseManager {
     private final Map<UUID, PlayerProfile> originalProfiles = new ConcurrentHashMap<>();
     private final Map<UUID, String> originalDisplayNames = new ConcurrentHashMap<>();
     private final Map<UUID, String> originalListNames = new ConcurrentHashMap<>();
+    private final Map<UUID, TextDisplay> nametagDisplays = new ConcurrentHashMap<>();
 
     public DisguiseManager(ChatUtils plugin) {
         this.plugin = plugin;
@@ -81,70 +89,127 @@ public class DisguiseManager {
                     return;
                 }
 
-                try {
-                    // Oyuncunun UUID'si ile yeni hedef isimli profil oluştur
-                    PlayerProfile newProfile = Bukkit.createProfile(uuid, cleanTargetName);
-                    if (fetched != null && fetched.getProperties() != null) {
-                        for (ProfileProperty prop : fetched.getProperties()) {
-                            newProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
-                        }
-                    }
-                    player.setPlayerProfile(newProfile);
-                } catch (Throwable t) {
-                    // Fallback
-                }
-
-                String tabFormatted = (finalPrefix != null && !finalPrefix.isEmpty() ? finalPrefix : "") + cleanTargetName;
-                String coloredTab = ColorUtil.colorize(tabFormatted);
-
-                player.setDisplayName(cleanTargetName);
-                player.setPlayerListName(coloredTab);
-                player.customName(Component.text(cleanTargetName));
-
-                DisguiseData data = new DisguiseData(
-                        uuid,
-                        player.getName(),
-                        cleanTargetName,
-                        targetRank,
-                        finalPrefix
-                );
-                activeDisguises.put(uuid, data);
-
-                refreshPlayer(player);
+                applyDisguiseInternal(player, cleanTargetName, targetRank, finalPrefix, fetched);
 
                 if (callback != null) callback.accept(true);
             });
         }).exceptionally(ex -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (player.isOnline()) {
-                    try {
-                        PlayerProfile newProfile = Bukkit.createProfile(uuid, cleanTargetName);
-                        player.setPlayerProfile(newProfile);
-                    } catch (Throwable t) {
-                    }
-
-                    String tabFormatted = (finalPrefix != null && !finalPrefix.isEmpty() ? finalPrefix : "") + cleanTargetName;
-                    String coloredTab = ColorUtil.colorize(tabFormatted);
-
-                    player.setDisplayName(cleanTargetName);
-                    player.setPlayerListName(coloredTab);
-                    player.customName(Component.text(cleanTargetName));
-
-                    DisguiseData data = new DisguiseData(
-                            uuid,
-                            player.getName(),
-                            cleanTargetName,
-                            targetRank,
-                            finalPrefix
-                    );
-                    activeDisguises.put(uuid, data);
-
-                    refreshPlayer(player);
+                    applyDisguiseInternal(player, cleanTargetName, targetRank, finalPrefix, null);
                 }
                 if (callback != null) callback.accept(true);
             });
             return null;
         });
+    }
+
+    private void applyDisguiseInternal(Player player, String cleanTargetName, String targetRank, String finalPrefix, PlayerProfile fetchedSkin) {
+        UUID uuid = player.getUniqueId();
+
+        try {
+            PlayerProfile newProfile = Bukkit.createProfile(uuid, cleanTargetName);
+            if (fetchedSkin != null && fetchedSkin.getProperties() != null) {
+                for (ProfileProperty prop : fetchedSkin.getProperties()) {
+                    newProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                }
+            }
+            player.setPlayerProfile(newProfile);
+        } catch (Throwable ignored) {
+        }
+
+        String tabFormatted = (finalPrefix != null && !finalPrefix.isEmpty() ? finalPrefix : "") + cleanTargetName;
+        String coloredTab = ColorUtil.colorize(tabFormatted);
+
+        player.setDisplayName(cleanTargetName);
+        player.setPlayerListName(coloredTab);
+        player.customName(Component.text(cleanTargetName));
+
+        DisguiseData data = new DisguiseData(
+                uuid,
+                player.getName(),
+                cleanTargetName,
+                targetRank,
+                finalPrefix
+        );
+        activeDisguises.put(uuid, data);
+
+        // Dünyada oyuncu üzerindeki nametag'i güncelle
+        setupNametagDisplay(player, coloredTab);
+
+        refreshPlayer(player);
+    }
+
+    public void reapplyDisguise(Player player) {
+        if (player == null || !player.isOnline()) return;
+        DisguiseData data = activeDisguises.get(player.getUniqueId());
+        if (data == null) return;
+
+        String tabFormatted = (data.getDisguisedPrefix() != null && !data.getDisguisedPrefix().isEmpty() ? data.getDisguisedPrefix() : "") + data.getDisguisedName();
+        String coloredTab = ColorUtil.colorize(tabFormatted);
+
+        player.setDisplayName(data.getDisguisedName());
+        player.setPlayerListName(coloredTab);
+        player.customName(Component.text(data.getDisguisedName()));
+
+        setupNametagDisplay(player, coloredTab);
+        refreshPlayer(player);
+    }
+
+    public void setupNametagDisplay(Player player, String coloredName) {
+        if (player == null || !player.isOnline()) return;
+
+        // 1. Vanilla nametag'i Scoreboard Team ile gizle
+        Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+        String teamName = "cud_" + player.getName().toLowerCase();
+        if (teamName.length() > 16) teamName = teamName.substring(0, 16);
+
+        Team team = sb.getTeam(teamName);
+        if (team == null) {
+            team = sb.registerNewTeam(teamName);
+        }
+        team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+        if (!team.hasEntry(player.getName())) {
+            team.addEntry(player.getName());
+        }
+
+        // 2. TextDisplay entity oluşturup oyuncunun üzerine bağla
+        removeNametagDisplay(player);
+
+        try {
+            TextDisplay display = player.getWorld().spawn(player.getLocation(), TextDisplay.class, entity -> {
+                entity.text(Component.text(coloredName));
+                entity.setBillboard(Display.Billboard.CENTER);
+                entity.setDefaultBackground(false);
+                entity.setShadowed(true);
+                entity.setTransformation(new Transformation(
+                        new Vector3f(0f, 0.35f, 0f),
+                        new AxisAngle4f(),
+                        new Vector3f(1f, 1f, 1f),
+                        new AxisAngle4f()
+                ));
+            });
+            player.addPassenger(display);
+            nametagDisplays.put(player.getUniqueId(), display);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    public void removeNametagDisplay(Player player) {
+        if (player == null) return;
+        TextDisplay oldDisplay = nametagDisplays.remove(player.getUniqueId());
+        if (oldDisplay != null && oldDisplay.isValid()) {
+            oldDisplay.remove();
+        }
+    }
+
+    public void recreateNametagDisplay(Player player) {
+        if (player == null || !player.isOnline()) return;
+        DisguiseData data = activeDisguises.get(player.getUniqueId());
+        if (data != null) {
+            String tabFormatted = (data.getDisguisedPrefix() != null && !data.getDisguisedPrefix().isEmpty() ? data.getDisguisedPrefix() : "") + data.getDisguisedName();
+            setupNametagDisplay(player, ColorUtil.colorize(tabFormatted));
+        }
     }
 
     public boolean undisguise(Player player) {
@@ -153,7 +218,20 @@ public class DisguiseManager {
         UUID uuid = player.getUniqueId();
         DisguiseData data = activeDisguises.remove(uuid);
         if (data != null) {
-            // 1. Orijinal profili ve skin dokularını geri yükle
+            // 1. TextDisplay ve Team temizliği
+            removeNametagDisplay(player);
+
+            Scoreboard sb = Bukkit.getScoreboardManager().getMainScoreboard();
+            String teamName = "cud_" + player.getName().toLowerCase();
+            if (teamName.length() > 16) teamName = teamName.substring(0, 16);
+
+            Team team = sb.getTeam(teamName);
+            if (team != null) {
+                team.removeEntry(player.getName());
+                team.unregister();
+            }
+
+            // 2. Orijinal profili ve skin dokularını geri yükle
             PlayerProfile originalProfile = originalProfiles.remove(uuid);
             if (originalProfile == null) {
                 originalProfile = Bukkit.createProfile(uuid, player.getName());
@@ -162,11 +240,10 @@ public class DisguiseManager {
 
             try {
                 player.setPlayerProfile(originalProfile);
-            } catch (Throwable t) {
-                // Fallback
+            } catch (Throwable ignored) {
             }
 
-            // 2. Orijinal isim ve tab listesini geri yükle
+            // 3. Orijinal isim ve tab listesini geri yükle
             String origDisplay = originalDisplayNames.remove(uuid);
             if (origDisplay == null) origDisplay = player.getName();
 
@@ -177,7 +254,7 @@ public class DisguiseManager {
             player.setPlayerListName(origList);
             player.customName(null);
 
-            // 3. Görsel güncelleme (1 tick gecikmeli hide/show)
+            // 4. Görsel güncelleme
             refreshPlayer(player);
             return true;
         }
@@ -198,7 +275,7 @@ public class DisguiseManager {
         Location loc = player.getLocation();
         player.teleport(loc);
 
-        // 3. Paket ayrımını sağlamak için 1 tick sonra diğer oyunculara tekrar göster
+        // 3. 1 tick sonra diğer oyunculara tekrar göster
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline()) return;
 
@@ -246,6 +323,12 @@ public class DisguiseManager {
                 undisguise(player);
             }
         }
+        for (TextDisplay display : nametagDisplays.values()) {
+            if (display != null && display.isValid()) {
+                display.remove();
+            }
+        }
+        nametagDisplays.clear();
         activeDisguises.clear();
         originalProfiles.clear();
         originalDisplayNames.clear();
