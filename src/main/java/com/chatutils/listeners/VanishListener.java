@@ -30,6 +30,9 @@ public class VanishListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
+        // Orijinal profil verilerini kaydet
+        plugin.getDisguiseManager().onPlayerJoin(player);
+
         // Eğer oyuncu vanish durumundaysa giriş mesajını tamamen engelle
         if (plugin.getVanishManager().isVanished(player)) {
             event.joinMessage(null);

@@ -7,11 +7,10 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -20,9 +19,33 @@ public class DisguiseManager {
 
     private final ChatUtils plugin;
     private final Map<UUID, DisguiseData> activeDisguises = new ConcurrentHashMap<>();
+    private final Map<UUID, PlayerProfile> originalProfiles = new ConcurrentHashMap<>();
+    private final Map<UUID, String> originalDisplayNames = new ConcurrentHashMap<>();
+    private final Map<UUID, String> originalListNames = new ConcurrentHashMap<>();
 
     public DisguiseManager(ChatUtils plugin) {
         this.plugin = plugin;
+    }
+
+    public void onPlayerJoin(Player player) {
+        saveOriginalState(player);
+    }
+
+    private void saveOriginalState(Player player) {
+        if (player == null) return;
+        UUID uuid = player.getUniqueId();
+        if (!originalProfiles.containsKey(uuid)) {
+            PlayerProfile cleanOriginal = Bukkit.createProfile(uuid, player.getName());
+            PlayerProfile current = player.getPlayerProfile();
+            if (current != null && current.getProperties() != null) {
+                for (ProfileProperty prop : current.getProperties()) {
+                    cleanOriginal.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                }
+            }
+            originalProfiles.put(uuid, cleanOriginal);
+            originalDisplayNames.put(uuid, player.getDisplayName() != null ? player.getDisplayName() : player.getName());
+            originalListNames.put(uuid, player.getPlayerListName() != null ? player.getPlayerListName() : player.getName());
+        }
     }
 
     public void disguise(Player player, String targetName, String targetRank, Consumer<Boolean> callback) {
@@ -34,20 +57,10 @@ public class DisguiseManager {
         final String cleanTargetName = targetName.trim();
         final UUID uuid = player.getUniqueId();
 
-        // 1. Orijinal skin dokularını kaydet (Daha önce disguise olunmamışsa)
-        Set<ProfileProperty> originalProperties = new HashSet<>();
-        if (isDisguised(player)) {
-            originalProperties.addAll(activeDisguises.get(uuid).getOriginalProperties());
-        } else {
-            PlayerProfile current = player.getPlayerProfile();
-            if (current != null && current.getProperties() != null) {
-                for (ProfileProperty prop : current.getProperties()) {
-                    originalProperties.add(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
-                }
-            }
-        }
+        // 1. Orijinal profili ve isimleri hafızaya al
+        saveOriginalState(player);
 
-        // 2. Rank Prefix & Renk belirle (Yetkiler DEĞİŞMEZ, sadece görsel TAB ve Chat rengi/prefix'i alınır)
+        // 2. Rank Prefix & Görünüm belirle (Yetkiler DEĞİŞMEZ, yalnızca TAB ve Chat formatı)
         String prefix = null;
         if (targetRank != null && !targetRank.trim().isEmpty()) {
             prefix = LuckPermsHook.getGroupPrefix(targetRank);
@@ -58,7 +71,7 @@ public class DisguiseManager {
 
         final String finalPrefix = prefix;
 
-        // 3. Mojang'dan asenkron skin çekme
+        // 3. Hedef oyuncunun Mojang skinini asenkron çek
         PlayerProfile fetchProfile = Bukkit.createProfile(cleanTargetName);
 
         fetchProfile.update().thenAcceptAsync(fetched -> {
@@ -69,15 +82,14 @@ public class DisguiseManager {
                 }
 
                 try {
-                    PlayerProfile playerProfile = player.getPlayerProfile();
-                    playerProfile.clearProperties();
+                    // Oyuncunun UUID'si ile yeni hedef isimli profil oluştur
+                    PlayerProfile newProfile = Bukkit.createProfile(uuid, cleanTargetName);
                     if (fetched != null && fetched.getProperties() != null) {
                         for (ProfileProperty prop : fetched.getProperties()) {
-                            playerProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                            newProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
                         }
                     }
-                    playerProfile.setName(cleanTargetName);
-                    player.setPlayerProfile(playerProfile);
+                    player.setPlayerProfile(newProfile);
                 } catch (Throwable t) {
                     // Fallback
                 }
@@ -92,7 +104,6 @@ public class DisguiseManager {
                 DisguiseData data = new DisguiseData(
                         uuid,
                         player.getName(),
-                        originalProperties,
                         cleanTargetName,
                         targetRank,
                         finalPrefix
@@ -107,9 +118,8 @@ public class DisguiseManager {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (player.isOnline()) {
                     try {
-                        PlayerProfile playerProfile = player.getPlayerProfile();
-                        playerProfile.setName(cleanTargetName);
-                        player.setPlayerProfile(playerProfile);
+                        PlayerProfile newProfile = Bukkit.createProfile(uuid, cleanTargetName);
+                        player.setPlayerProfile(newProfile);
                     } catch (Throwable t) {
                     }
 
@@ -123,7 +133,6 @@ public class DisguiseManager {
                     DisguiseData data = new DisguiseData(
                             uuid,
                             player.getName(),
-                            originalProperties,
                             cleanTargetName,
                             targetRank,
                             finalPrefix
@@ -141,24 +150,34 @@ public class DisguiseManager {
     public boolean undisguise(Player player) {
         if (player == null || !player.isOnline()) return false;
 
-        DisguiseData data = activeDisguises.remove(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        DisguiseData data = activeDisguises.remove(uuid);
         if (data != null) {
+            // 1. Orijinal profili ve skin dokularını geri yükle
+            PlayerProfile originalProfile = originalProfiles.remove(uuid);
+            if (originalProfile == null) {
+                originalProfile = Bukkit.createProfile(uuid, player.getName());
+                originalProfile.update();
+            }
+
             try {
-                PlayerProfile playerProfile = player.getPlayerProfile();
-                playerProfile.clearProperties();
-                for (ProfileProperty prop : data.getOriginalProperties()) {
-                    playerProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
-                }
-                playerProfile.setName(player.getName());
-                player.setPlayerProfile(playerProfile);
+                player.setPlayerProfile(originalProfile);
             } catch (Throwable t) {
                 // Fallback
             }
 
-            player.setDisplayName(player.getName());
-            player.setPlayerListName(player.getName());
-            player.customName(Component.text(player.getName()));
+            // 2. Orijinal isim ve tab listesini geri yükle
+            String origDisplay = originalDisplayNames.remove(uuid);
+            if (origDisplay == null) origDisplay = player.getName();
 
+            String origList = originalListNames.remove(uuid);
+            if (origList == null) origList = player.getName();
+
+            player.setDisplayName(origDisplay);
+            player.setPlayerListName(origList);
+            player.customName(null);
+
+            // 3. Görsel güncelleme (1 tick gecikmeli hide/show)
             refreshPlayer(player);
             return true;
         }
@@ -168,21 +187,30 @@ public class DisguiseManager {
     public void refreshPlayer(Player player) {
         if (player == null || !player.isOnline()) return;
 
+        // 1. Diğer tüm oyunculardan gizle
         for (Player other : Bukkit.getOnlinePlayers()) {
             if (!other.equals(player)) {
-                if (plugin.getVanishManager().isVanished(player) && !other.hasPermission("chatutils.vanish.see")) {
-                    continue;
-                }
                 other.hidePlayer(plugin, player);
-                other.showPlayer(plugin, player);
             }
         }
 
-        // Kendi istemcisinde de modeli yenile
-        if (!plugin.getVanishManager().isVanished(player)) {
-            player.hidePlayer(plugin, player);
-            player.showPlayer(plugin, player);
-        }
+        // 2. Kendi istemcisini güncelle
+        Location loc = player.getLocation();
+        player.teleport(loc);
+
+        // 3. Paket ayrımını sağlamak için 1 tick sonra diğer oyunculara tekrar göster
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!player.isOnline()) return;
+
+            for (Player other : Bukkit.getOnlinePlayers()) {
+                if (!other.equals(player)) {
+                    if (plugin.getVanishManager().isVanished(player) && !other.hasPermission("chatutils.vanish.see")) {
+                        continue;
+                    }
+                    other.showPlayer(plugin, player);
+                }
+            }
+        }, 1L);
     }
 
     public boolean isDisguised(Player player) {
@@ -219,5 +247,8 @@ public class DisguiseManager {
             }
         }
         activeDisguises.clear();
+        originalProfiles.clear();
+        originalDisplayNames.clear();
+        originalListNames.clear();
     }
 }
