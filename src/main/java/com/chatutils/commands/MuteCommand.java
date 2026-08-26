@@ -32,26 +32,23 @@ public class MuteCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length < 2) {
+        if (args.length < 1) {
             sender.sendMessage(plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMessage("mute-usage"));
             return true;
         }
 
         String targetName = args[0];
-        String durationStr = args[1];
-        Long durationMillis = TimeUtil.parseDuration(durationStr);
+        String defaultDurationStr = plugin.getConfigManager().getConfig().getString("punishments.default-mute-duration", "15m");
+        Long durationMillis = TimeUtil.parseDuration(defaultDurationStr);
+        if (durationMillis == null) durationMillis = 15 * 60 * 1000L;
+        int reasonStartIndex = 1;
 
-        int reasonStartIndex = 2;
-        if (durationMillis == null) {
-            // Belki süre yazılmadan direkt sebep yazıldı: varsayılan süreyi dene
-            durationStr = plugin.getConfigManager().getConfig().getString("punishments.default-mute-duration", "15m");
-            durationMillis = TimeUtil.parseDuration(durationStr);
-            reasonStartIndex = 1;
-        }
-
-        if (durationMillis == null) {
-            sender.sendMessage(plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMessage("invalid-time"));
-            return true;
+        if (args.length >= 2) {
+            Long parsed = TimeUtil.parseDuration(args[1]);
+            if (parsed != null) {
+                durationMillis = parsed;
+                reasonStartIndex = 2;
+            }
         }
 
         String reason;

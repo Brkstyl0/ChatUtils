@@ -37,12 +37,16 @@ punishments:
   broadcast-ban: true
   # Unban atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
   broadcast-unban: true
+  # Kick atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)
+  broadcast-kick: true
   # Varsayılan susturma süresi (eğer süre girilmezse, örn: 15m)
   default-mute-duration: "15m"
   # Varsayılan susturma sebebi
   default-mute-reason: "Kurallara uymamak"
   # Varsayılan yasaklama sebebi
   default-ban-reason: "Sunucu kurallarını ihlal etmek"
+  # Varsayılan atılma (kick) sebebi
+  default-kick-reason: "Sunucu kurallarını ihlal etmek"
 
 # Tab tamamlama için önerilen varsayılan sebepler
 suggested-reasons:
@@ -65,3 +69,11 @@ suggested-reasons:
     - "Ağır Küfür / Hakaret"
     - "Sunucu / Site Reklamı"
     - "Yetkiliyi Yanıltma"
+  kick:
+    - "Uyarı / Kurallara Uyunuz"
+    - "Sohbet Düzenini Bozma"
+    - "AFK / Hareketsiz Kalma"
+    - "Yetkiliyi Meşgul Etme"
+    - "Uygunsuz Davranış"
+    - "Spam / Flood"
+    - "Hile Şüphesi / Kontrol"

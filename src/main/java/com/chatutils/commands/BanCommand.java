@@ -17,7 +17,12 @@ import java.util.stream.Collectors;
 public class BanCommand implements CommandExecutor, TabCompleter {
 
     private final ChatUtils plugin;
-    private static final List<String> DURATION_SUGGESTIONS = List.of(
+    public static final long MAX_TEMP_BAN_MILLIS = 30L * 24 * 60 * 60 * 1000L; // 30 Gün
+
+    private static final List<String> SHORT_DURATION_SUGGESTIONS = List.of(
+            "1h", "6h", "12h", "1d", "3d", "7d", "14d", "30d"
+    );
+    private static final List<String> ALL_DURATION_SUGGESTIONS = List.of(
             "1h", "6h", "12h", "1d", "3d", "7d", "14d", "30d", "60d", "90d", "kalici"
     );
 
@@ -53,6 +58,13 @@ public class BanCommand implements CommandExecutor, TabCompleter {
                 durationMillis = parsed;
                 reasonStartIndex = 2;
             }
+        }
+
+        // 30 günden fazla veya kalıcı banlar için kalıcı ban yetkisi kontrolü
+        boolean isPermanentOrOver30d = (durationMillis == -1L || durationMillis > MAX_TEMP_BAN_MILLIS);
+        if (isPermanentOrOver30d && !sender.hasPermission("chatutils.ban.permanent")) {
+            sender.sendMessage(plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMessage("ban-no-permanent-permission"));
+            return true;
         }
 
         String reason;
@@ -133,7 +145,8 @@ public class BanCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 2) {
             String input = args[1].toLowerCase();
-            return DURATION_SUGGESTIONS.stream()
+            List<String> durationList = sender.hasPermission("chatutils.ban.permanent") ? ALL_DURATION_SUGGESTIONS : SHORT_DURATION_SUGGESTIONS;
+            return durationList.stream()
                     .filter(d -> d.toLowerCase().startsWith(input))
                     .collect(Collectors.toList());
         }

@@ -34,12 +34,21 @@ public class ClearChatCommand implements CommandExecutor, TabCompleter {
 
     public static void executeClear(ChatUtils plugin, CommandSender sender) {
         int lines = plugin.getConfigManager().getConfig().getInt("clearchat.blank-lines", 120);
+        if (lines < 50) lines = 100;
         String soundName = plugin.getConfigManager().getConfig().getString("clearchat.sound", "ENTITY_EXPERIENCE_ORB_PICKUP");
 
-        // Modern Minecraft (Paper 26.2) istemcilerinde sohbeti yukarı kaydırmak için boşluklu satırlar
+        // İstemcilerin (Lunar, Badlion, Vanilla vb.) aynı boş satırları birleştirmesini önlemek için varyasyonlu görünmez satırlar
+        String[] blankLines = new String[lines];
+        char[] colorCodes = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        for (int i = 0; i < lines; i++) {
+            char c = colorCodes[i % colorCodes.length];
+            blankLines[i] = "§" + c + "§r " + " ".repeat(i % 4);
+        }
+
+        // Tüm çevrimiçi oyunculara (komutu yazan yetkili dahil) gönder
         for (Player player : Bukkit.getOnlinePlayers()) {
-            for (int i = 0; i < lines; i++) {
-                player.sendMessage(" ");
+            for (String line : blankLines) {
+                player.sendMessage(line);
             }
             if (soundName != null && !soundName.equalsIgnoreCase("NONE")) {
                 try {

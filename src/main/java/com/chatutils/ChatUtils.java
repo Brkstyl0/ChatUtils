@@ -59,8 +59,8 @@ public final class ChatUtils extends JavaPlugin {
         registerCommand("mute", new MuteCommand(this));
         registerCommand("unmute", new UnmuteCommand(this));
         registerCommand("ban", new BanCommand(this));
-        registerCommand("tempban", new TempbanCommand(this));
         registerCommand("unban", new UnbanCommand(this));
+        registerCommand("kick", new KickCommand(this));
         registerCommand("chat", new ChatCommand(this));
         registerCommand("clearchat", new ClearChatCommand(this));
         registerCommand("duyuru", new BroadcastCommand(this));

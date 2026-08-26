@@ -22,49 +22,27 @@ mute-usage: "&eKullanım: &6/mute <oyuncu> <süre> [sebep]\n&7Örnek: &f/mute St
 unmute-usage: "&eKullanım: &6/unmute <oyuncu>"
 
 mute-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&c&l[MUTE] &eBir oyuncu susturuldu!"
-  - " &8» &eSusturulan: &c{target}"
-  - " &8» &eSusturan: &f{staff}"
-  - " &8» &eSüre: &a{duration}"
-  - " &8» &eSebep: &f{reason}"
-  - "&8&m--------------------------------------------------"
+  - "&c&l[MUTE] &e{target}&7 adlı oyuncu &f{staff} &7tarafından &e{duration} &7susturuldu."
+  - "&8» &7Sebep: &f{reason}"
 
 unmute-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&a&l[UNMUTE] &eBir oyuncunun susturması kaldırıldı!"
-  - " &8» &eOyuncu: &a{target}"
-  - " &8» &eYetkili: &f{staff}"
-  - "&8&m--------------------------------------------------"
+  - "&a&l[UNMUTE] &e{target}&7 adlı oyuncunun susturması &f{staff} &7tarafından kaldırıldı."
 
 muted-chat-attempt:
-  - "&8&m--------------------------------------------------"
-  - "&c&l[!] &eŞu anda susturulmuş durumdasınız!"
-  - " &8» &eSusturan Yetkili: &f{staff}"
-  - " &8» &eKalan Süre: &c{remaining}"
-  - " &8» &eSebep: &f{reason}"
-  - "&8&m--------------------------------------------------"
+  - "&c&l[!] &eŞu anda susturulmuş durumdasınız! &8(&eKalan: &c{remaining}&8 | &eYetkili: &f{staff}&8)"
+  - "&8» &7Sebep: &f{reason}"
 
 # Ban Mesajları
-ban-usage: "&eKullanım: &6/ban <oyuncu> [süre/kalici] [sebep]\n&7Örnek: &f/ban Steve 1d Hile kullanımı\n&7Örnek: &f/ban Steve kalici Griefing"
-tempban-usage: "&eKullanım: &6/tempban <oyuncu> <süre> [sebep]\n&7Örnek: &f/tempban Steve 7d Reklam"
+ban-usage: "&eKullanım: &6/ban <oyuncu> [süre/kalici] [sebep]\n&7Örnek: &f/ban Steve 7d Hile kullanımı\n&7Örnek: &f/ban Steve kalici Griefing"
+ban-no-permanent-permission: "&c30 günden uzun veya kalıcı yasaklama uygulamak için &echatutils.ban.permanent &cyetkisine sahip olmalısınız! &7(En fazla 30 gün belirtebilirsiniz)"
 unban-usage: "&eKullanım: &6/unban <oyuncu>"
 
 ban-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&4&l[BAN] &eBir oyuncu sunucudan uzaklaştırıldı!"
-  - " &8» &eYasaklanan: &c{target}"
-  - " &8» &eYasaklayan: &f{staff}"
-  - " &8» &eSüre: &a{duration}"
-  - " &8» &eSebep: &f{reason}"
-  - "&8&m--------------------------------------------------"
+  - "&4&l[BAN] &e{target}&7 adlı oyuncu &f{staff} &7tarafından &e{duration} &7yasaklandı."
+  - "&8» &7Sebep: &f{reason}"
 
 unban-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&a&l[UNBAN] &eBir oyuncunun sunucu yasağı kaldırıldı!"
-  - " &8» &eOyuncu: &a{target}"
-  - " &8» &eYetkili: &f{staff}"
-  - "&8&m--------------------------------------------------"
+  - "&a&l[UNBAN] &e{target}&7 adlı oyuncunun sunucu yasağı &f{staff} &7tarafından kaldırıldı."
 
 # Ban Ekranı (Kick & Login Screen)
 ban-screen:
@@ -78,20 +56,31 @@ ban-screen:
   - "&7Haksız yasaklandığınızı düşünüyorsanız"
   - "&7itiraz için yetkililerimize başvurabilirsiniz."
 
+# Kick Mesajları & Ekranı
+cant-kick-self: "&cKendinizi sunucudan atamazsınız!"
+cant-kick-immune: "&cBu yetkiliyi sunucudan atamazsınız!"
+kick-usage: "&eKullanım: &6/kick <oyuncu> [sebep]\n&7Örnek: &f/kick Steve Uygunsuz davranış"
+
+kick-broadcast:
+  - "&c&l[KICK] &e{target}&7 adlı oyuncu &f{staff} &7tarafından sunucudan atıldı."
+  - "&8» &7Sebep: &f{reason}"
+
+kick-screen:
+  - "&6&lSUNUCUDAN ATILDINIZ &8(&eUyarı&8)"
+  - ""
+  - "&8» &eAtan Yetkili: &f{staff}"
+  - "&8» &eAtılma Sebebi: &f{reason}"
+  - "&8» &eTarih: &7{date}"
+  - ""
+  - "&a✔ Bu bir yasaklama (ban) değildir, sunucuya hemen tekrar bağlanabilirsiniz."
+  - "&7Lütfen kurallara dikkat ederek oynamaya devam ediniz."
+
 # Sohbet Kilitleme / Açma Mesajları
 chat-locked-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&c&l[SOHBET KİLİTLENDİ]"
-  - "&eSohbet &f{staff} &etarafından &ckapatılmıştır&e."
-  - "&7(Sadece yetkili personeller konuşabilir)"
-  - "&8&m--------------------------------------------------"
+  - "&c&l[SOHBET] &7Sohbet &f{staff} &7tarafından &ckapatılmıştır&7."
 
 chat-unlocked-broadcast:
-  - "&8&m--------------------------------------------------"
-  - "&a&l[SOHBET AÇILDI]"
-  - "&eSohbet &f{staff} &etarafından &atekrardan açılmıştır&e."
-  - "&7(Tüm oyuncular sohbete yazabilir)"
-  - "&8&m--------------------------------------------------"
+  - "&a&l[SOHBET] &7Sohbet &f{staff} &7tarafından &atekrar açılmıştır&7."
 
 chat-is-locked-warning: "&c[!] Sohbet şu anda kilitlidir! Yalnızca yetkililer mesaj gönderebilir."
 chat-status-locked: "&eSohbet durumu: &cKİLİTLİ"

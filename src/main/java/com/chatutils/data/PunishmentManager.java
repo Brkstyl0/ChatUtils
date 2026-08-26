@@ -74,26 +74,26 @@ public class PunishmentManager {
     }
 
     public synchronized void saveData() {
-        if (dataConfig == null || dataFile == null) return;
+        if (dataFile == null) return;
 
-        dataConfig.set("mutes", null);
-        dataConfig.set("bans", null);
-        dataConfig.set("chat-locked", chatLocked);
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("chat-locked", chatLocked);
 
         for (Map.Entry<String, Punishment> entry : activeMutes.entrySet()) {
             if (!entry.getValue().isExpired()) {
-                dataConfig.set("mutes." + entry.getKey(), entry.getValue().toMap());
+                config.set("mutes." + entry.getKey(), entry.getValue().toMap());
             }
         }
 
         for (Map.Entry<String, Punishment> entry : activeBans.entrySet()) {
             if (!entry.getValue().isExpired()) {
-                dataConfig.set("bans." + entry.getKey(), entry.getValue().toMap());
+                config.set("bans." + entry.getKey(), entry.getValue().toMap());
             }
         }
 
         try {
-            dataConfig.save(dataFile);
+            config.save(dataFile);
+            this.dataConfig = config;
         } catch (IOException e) {
             plugin.getLogger().severe("punishments.yml kaydedilirken hata olustu: " + e.getMessage());
         }
@@ -102,14 +102,28 @@ public class PunishmentManager {
     // --- MUTE METODLARI ---
 
     public void addMute(Punishment punishment) {
-        String key = punishment.getTargetName().toLowerCase(Locale.ROOT);
+        if (punishment == null || punishment.getTargetName() == null) return;
+        String key = punishment.getTargetName().trim().toLowerCase(Locale.ROOT);
         activeMutes.put(key, punishment);
         saveDataAsync();
     }
 
     public boolean removeMute(String targetName) {
-        String key = targetName.toLowerCase(Locale.ROOT);
-        if (activeMutes.remove(key) != null) {
+        if (targetName == null) return false;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
+        Punishment removed = activeMutes.remove(key);
+        if (removed == null) {
+            Iterator<Map.Entry<String, Punishment>> it = activeMutes.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Punishment> entry = it.next();
+                if (entry.getValue().getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    removed = entry.getValue();
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        if (removed != null) {
             saveDataAsync();
             return true;
         }
@@ -117,8 +131,17 @@ public class PunishmentManager {
     }
 
     public Punishment getMute(String targetName) {
-        String key = targetName.toLowerCase(Locale.ROOT);
+        if (targetName == null) return null;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
         Punishment p = activeMutes.get(key);
+        if (p == null) {
+            for (Punishment punishment : activeMutes.values()) {
+                if (punishment.getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    p = punishment;
+                    break;
+                }
+            }
+        }
         if (p != null) {
             if (p.isExpired()) {
                 activeMutes.remove(key);
@@ -136,7 +159,11 @@ public class PunishmentManager {
 
     public Set<String> getMutedPlayerNames() {
         cleanExpiredMutes();
-        return new HashSet<>(activeMutes.keySet());
+        Set<String> names = new LinkedHashSet<>();
+        for (Punishment p : activeMutes.values()) {
+            names.add(p.getTargetName());
+        }
+        return names;
     }
 
     private void cleanExpiredMutes() {
@@ -155,14 +182,28 @@ public class PunishmentManager {
     // --- BAN METODLARI ---
 
     public void addBan(Punishment punishment) {
-        String key = punishment.getTargetName().toLowerCase(Locale.ROOT);
+        if (punishment == null || punishment.getTargetName() == null) return;
+        String key = punishment.getTargetName().trim().toLowerCase(Locale.ROOT);
         activeBans.put(key, punishment);
         saveDataAsync();
     }
 
     public boolean removeBan(String targetName) {
-        String key = targetName.toLowerCase(Locale.ROOT);
-        if (activeBans.remove(key) != null) {
+        if (targetName == null) return false;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
+        Punishment removed = activeBans.remove(key);
+        if (removed == null) {
+            Iterator<Map.Entry<String, Punishment>> it = activeBans.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Punishment> entry = it.next();
+                if (entry.getValue().getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    removed = entry.getValue();
+                    it.remove();
+                    break;
+                }
+            }
+        }
+        if (removed != null) {
             saveDataAsync();
             return true;
         }
@@ -170,8 +211,17 @@ public class PunishmentManager {
     }
 
     public Punishment getBan(String targetName) {
-        String key = targetName.toLowerCase(Locale.ROOT);
+        if (targetName == null) return null;
+        String key = targetName.trim().toLowerCase(Locale.ROOT);
         Punishment p = activeBans.get(key);
+        if (p == null) {
+            for (Punishment punishment : activeBans.values()) {
+                if (punishment.getTargetName().equalsIgnoreCase(targetName.trim())) {
+                    p = punishment;
+                    break;
+                }
+            }
+        }
         if (p != null) {
             if (p.isExpired()) {
                 activeBans.remove(key);
@@ -189,7 +239,11 @@ public class PunishmentManager {
 
     public Set<String> getBannedPlayerNames() {
         cleanExpiredBans();
-        return new HashSet<>(activeBans.keySet());
+        Set<String> names = new LinkedHashSet<>();
+        for (Punishment p : activeBans.values()) {
+            names.add(p.getTargetName());
+        }
+        return names;
     }
 
     private void cleanExpiredBans() {

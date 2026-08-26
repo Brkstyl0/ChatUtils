@@ -16,20 +16,20 @@ commands:
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <oyuncu>
   ban:
-    description: Bir oyuncuyu sunucudan kalıcı olarak yasaklar.
+    description: Bir oyuncuyu sunucudan süreli veya kalıcı olarak yasaklar.
     permission: chatutils.ban
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <oyuncu> [süre/kalici] [sebep]
-  tempban:
-    description: Bir oyuncuyu sunucudan süreli olarak yasaklar.
-    permission: chatutils.tempban
-    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
-    usage: /<command> <oyuncu> <süre> [sebep]
   unban:
     description: Bir oyuncunun sunucu yasağını kaldırır.
     permission: chatutils.unban
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> <oyuncu>
+  kick:
+    description: Bir oyuncuyu sunucudan atar.
+    permission: chatutils.kick
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> [sebep]
   chat:
     description: Sohbeti kilitler, açar veya durumunu yönetir.
     aliases: [sohbet, chatlock]
@@ -62,11 +62,13 @@ permissions:
       chatutils.mute: true
       chatutils.unmute: true
       chatutils.ban: true
-      chatutils.tempban: true
+      chatutils.ban.permanent: true
       chatutils.unban: true
+      chatutils.kick: true
       chatutils.chat.toggle: true
       chatutils.chat.clear: true
       chatutils.chat.bypass: true
+      chatutils.bypass.kick: true
       chatutils.broadcast: true
       chatutils.reload: true
 
@@ -77,13 +79,19 @@ permissions:
     description: /unmute komutunu kullanma yetkisi.
     default: op
   chatutils.ban:
-    description: /ban komutunu kullanma yetkisi.
+    description: /ban komutunu kullanma yetkisi (Maksimum 30 güne kadar süreli ban).
     default: op
-  chatutils.tempban:
-    description: /tempban komutunu kullanma yetkisi.
+  chatutils.ban.permanent:
+    description: 30 günden uzun veya kalıcı ban atabilme yetkisi.
     default: op
   chatutils.unban:
     description: /unban komutunu kullanma yetkisi.
+    default: op
+  chatutils.kick:
+    description: /kick komutunu kullanma yetkisi.
+    default: op
+  chatutils.bypass.kick:
+    description: /kick komutundan muaf olma yetkisi.
     default: op
   chatutils.chat.toggle:
     description: /chat kapat ve /chat aç komutlarını kullanma yetkisi.
