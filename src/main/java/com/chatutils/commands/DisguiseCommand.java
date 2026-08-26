@@ -39,6 +39,18 @@ public class DisguiseCommand implements CommandExecutor, TabCompleter {
         }
 
         String targetName = args[0].trim();
+
+        // /disguise off veya /disguise reset desteği
+        if (targetName.equalsIgnoreCase("off") || targetName.equalsIgnoreCase("reset") || targetName.equalsIgnoreCase("undisguise")) {
+            if (!plugin.getDisguiseManager().isDisguised(player)) {
+                player.sendMessage(plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMessage("not-disguised"));
+                return true;
+            }
+            plugin.getDisguiseManager().undisguise(player);
+            player.sendMessage(plugin.getConfigManager().getPrefix() + plugin.getConfigManager().getMessage("undisguise-success"));
+            return true;
+        }
+
         String targetRank = (args.length >= 2) ? args[1].trim() : null;
 
         // Geçersiz karakter kontrolü
@@ -72,10 +84,15 @@ public class DisguiseCommand implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             String input = args[0].toLowerCase(Locale.ROOT);
-            List<String> names = plugin.getConfigManager().getConfig().getStringList("disguise.suggested-names");
-            if (names.isEmpty()) {
-                names = List.of("Steve", "Alex", "GamerPro", "KralOyuncu", "Warrior", "Legend");
+            List<String> names = new ArrayList<>();
+            if (sender instanceof Player && plugin.getDisguiseManager().isDisguised((Player) sender)) {
+                names.add("off");
             }
+            List<String> configNames = plugin.getConfigManager().getConfig().getStringList("disguise.suggested-names");
+            if (configNames.isEmpty()) {
+                configNames = List.of("Steve", "Alex", "GamerPro", "KralOyuncu", "Warrior", "Legend");
+            }
+            names.addAll(configNames);
             return names.stream()
                     .filter(n -> n.toLowerCase(Locale.ROOT).startsWith(input))
                     .collect(Collectors.toList());

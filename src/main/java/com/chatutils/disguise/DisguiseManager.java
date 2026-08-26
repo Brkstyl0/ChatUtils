@@ -2,12 +2,16 @@ package com.chatutils.disguise;
 
 import com.chatutils.ChatUtils;
 import com.chatutils.hook.LuckPermsHook;
+import com.chatutils.utils.ColorUtil;
 import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -30,12 +34,20 @@ public class DisguiseManager {
         final String cleanTargetName = targetName.trim();
         final UUID uuid = player.getUniqueId();
 
-        // Orijinal profil kaydedilmemişse kopyala
-        PlayerProfile originalProfile = isDisguised(player) ?
-                activeDisguises.get(uuid).getOriginalProfile() :
-                player.getPlayerProfile().clone();
+        // 1. Orijinal skin dokularını kaydet (Daha önce disguise olunmamışsa)
+        Set<ProfileProperty> originalProperties = new HashSet<>();
+        if (isDisguised(player)) {
+            originalProperties.addAll(activeDisguises.get(uuid).getOriginalProperties());
+        } else {
+            PlayerProfile current = player.getPlayerProfile();
+            if (current != null && current.getProperties() != null) {
+                for (ProfileProperty prop : current.getProperties()) {
+                    originalProperties.add(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                }
+            }
+        }
 
-        // Rank prefix'ini belirle (LuckPerms üzerinden veya fallback)
+        // 2. Rank Prefix & Renk belirle (Yetkiler DEĞİŞMEZ, sadece görsel TAB ve Chat rengi/prefix'i alınır)
         String prefix = null;
         if (targetRank != null && !targetRank.trim().isEmpty()) {
             prefix = LuckPermsHook.getGroupPrefix(targetRank);
@@ -46,10 +58,10 @@ public class DisguiseManager {
 
         final String finalPrefix = prefix;
 
-        // Paper Profile API ile asenkron skin ve profil çek
-        PlayerProfile newProfile = Bukkit.createProfile(cleanTargetName);
+        // 3. Mojang'dan asenkron skin çekme
+        PlayerProfile fetchProfile = Bukkit.createProfile(cleanTargetName);
 
-        newProfile.update().thenAcceptAsync(updatedProfile -> {
+        fetchProfile.update().thenAcceptAsync(fetched -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (!player.isOnline()) {
                     if (callback != null) callback.accept(false);
@@ -57,20 +69,30 @@ public class DisguiseManager {
                 }
 
                 try {
-                    updatedProfile.setName(cleanTargetName);
-                    player.setPlayerProfile(updatedProfile);
+                    PlayerProfile playerProfile = player.getPlayerProfile();
+                    playerProfile.clearProperties();
+                    if (fetched != null && fetched.getProperties() != null) {
+                        for (ProfileProperty prop : fetched.getProperties()) {
+                            playerProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                        }
+                    }
+                    playerProfile.setName(cleanTargetName);
+                    player.setPlayerProfile(playerProfile);
                 } catch (Throwable t) {
-                    player.setDisplayName(cleanTargetName);
+                    // Fallback
                 }
 
+                String tabFormatted = (finalPrefix != null && !finalPrefix.isEmpty() ? finalPrefix : "") + cleanTargetName;
+                String coloredTab = ColorUtil.colorize(tabFormatted);
+
                 player.setDisplayName(cleanTargetName);
-                player.setPlayerListName(cleanTargetName);
+                player.setPlayerListName(coloredTab);
                 player.customName(Component.text(cleanTargetName));
 
                 DisguiseData data = new DisguiseData(
                         uuid,
                         player.getName(),
-                        originalProfile,
+                        originalProperties,
                         cleanTargetName,
                         targetRank,
                         finalPrefix
@@ -85,20 +107,23 @@ public class DisguiseManager {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (player.isOnline()) {
                     try {
-                        newProfile.setName(cleanTargetName);
-                        player.setPlayerProfile(newProfile);
+                        PlayerProfile playerProfile = player.getPlayerProfile();
+                        playerProfile.setName(cleanTargetName);
+                        player.setPlayerProfile(playerProfile);
                     } catch (Throwable t) {
-                        player.setDisplayName(cleanTargetName);
                     }
 
+                    String tabFormatted = (finalPrefix != null && !finalPrefix.isEmpty() ? finalPrefix : "") + cleanTargetName;
+                    String coloredTab = ColorUtil.colorize(tabFormatted);
+
                     player.setDisplayName(cleanTargetName);
-                    player.setPlayerListName(cleanTargetName);
+                    player.setPlayerListName(coloredTab);
                     player.customName(Component.text(cleanTargetName));
 
                     DisguiseData data = new DisguiseData(
                             uuid,
                             player.getName(),
-                            originalProfile,
+                            originalProperties,
                             cleanTargetName,
                             targetRank,
                             finalPrefix
@@ -119,7 +144,13 @@ public class DisguiseManager {
         DisguiseData data = activeDisguises.remove(player.getUniqueId());
         if (data != null) {
             try {
-                player.setPlayerProfile(data.getOriginalProfile());
+                PlayerProfile playerProfile = player.getPlayerProfile();
+                playerProfile.clearProperties();
+                for (ProfileProperty prop : data.getOriginalProperties()) {
+                    playerProfile.setProperty(new ProfileProperty(prop.getName(), prop.getValue(), prop.getSignature()));
+                }
+                playerProfile.setName(player.getName());
+                player.setPlayerProfile(playerProfile);
             } catch (Throwable t) {
                 // Fallback
             }
@@ -139,13 +170,18 @@ public class DisguiseManager {
 
         for (Player other : Bukkit.getOnlinePlayers()) {
             if (!other.equals(player)) {
-                // Eğer oyuncu vanished ise görme yetkisi olmayanlara tekrar gösterme
                 if (plugin.getVanishManager().isVanished(player) && !other.hasPermission("chatutils.vanish.see")) {
                     continue;
                 }
                 other.hidePlayer(plugin, player);
                 other.showPlayer(plugin, player);
             }
+        }
+
+        // Kendi istemcisinde de modeli yenile
+        if (!plugin.getVanishManager().isVanished(player)) {
+            player.hidePlayer(plugin, player);
+            player.showPlayer(plugin, player);
         }
     }
 
