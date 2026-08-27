@@ -77,13 +77,13 @@ Minecraft **Paper / Spigot / Purpur (26.2 / 1.20+)** sunucuları için geliştir
 
 ## ⚡ Öne Çıkan Özellikler
 
-1. **Simple Voice Chat Şifreli Grup Girişi & Sol Üstte Gözükmeyen Gizli Dinleme (Stealth Spy)**:
+1. **Simple Voice Chat Şifreli Grup Girişi & Gözükmeyen Gizli Dinleme (Stealth Spy)**:
    - Şifre korumalı tüm ses gruplarına yetkililerin şifresiz bağlanmasını sağlar.
    - Gruptaki oyuncuların sol üst köşesindeki üye listesinde/kafalarında **kesinlikle gözükmez**.
    - Yetkiliye periyodik `[SESLİ SPY: GrupAdı]` Action Bar HUD bildirimi sağlar.
    - `/vcspy talk on|off` ile gizli grupta mikrofon açıp kapatılabilir.
 
-2. **İksirsiz Profesyonel Vanish (/vanish & /v)**:
+2. **Profesyonel Vanish (/vanish & /v)**:
    - Görünmezlik iksiri kullanmaz; iksir parçacıkları, sesleri veya glitchleri kesinlikle oluşmaz.
    - `hidePlayer` paket seviyesinde çalışarak yetkiliyi hem dünyadan hem de **TAB listesinden tamamen siler**.
    - Yaratıklar hedef alamaz (no-aggro), yerdeki eşyalar çekilmez (no-pickup), basınç plakaları tetiklenmez.
