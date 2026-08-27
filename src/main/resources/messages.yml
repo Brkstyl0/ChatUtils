@@ -144,6 +144,58 @@ broadcast-format:
 # Özel Mesaj İzleme (Social Spy)
 socialspy-format: "&8[&cSPY&8] &e{sender} &8» &e{receiver}&8: &f{message}"
 
+# =================================================== #
+#     Simple Voice Chat Şifresiz Grup & Spy Mesajları  #
+# =================================================== #
+vc-not-available: "&cSimple Voice Chat eklentisi veya servisi sunucuda aktif değil!"
+vc-not-connected: "&cVoice Chat bağlantınız bulunamadı! Lütfen sesli sohbete bağlı olduğunuzdan emin olun."
+vc-target-not-connected: "&c{target} adlı oyuncunun Voice Chat bağlantısı bulunamadı!"
+vc-group-not-found: "&c'{input}' adında bir ses grubu veya grupta olan oyuncu bulunamadı!"
+vc-not-in-group: "&cŞu anda herhangi bir ses grubunda veya gizli dinleme modunda değilsiniz!"
+vc-target-not-in-group: "&c{target} adlı oyuncu herhangi bir ses grubunda değil!"
+
+vc-join-stealth-success:
+  - "&8&m--------------------------------------------------"
+  - " &a&l⭐ &2&lGİZLİ SES GRUBU BAĞLANTISI&r &a&l⭐"
+  - ""
+  - " &8» &eBağlanılan Grup: &f{group} {password}"
+  - " &8» &eMevcut Üye Sayısı: &a{count}"
+  - " &8» &eBağlantı Modu: &aGİZLİ DİNLEME &7(Stealth Ghost Spy)"
+  - " &8» &c&l✔ &cSol üstteki üye listesinde KESİNLİKLE GÖZÜKMEZSİNİZ!"
+  - " &8» &7Ayrılmak için: &e/vcleave &7| Konuşmak için: &e/vcspy talk"
+  - ""
+  - "&8&m--------------------------------------------------"
+
+vc-join-visible-success:
+  - "&8&m--------------------------------------------------"
+  - " &6&l⭐ &e&lSES GRUBU RESMİ GİRİŞİ&r &6&l⭐"
+  - ""
+  - " &8» &eKatılınan Grup: &f{group} {password}"
+  - " &8» &eGrup Türü: &b{type}"
+  - " &8» &eGiriş Durumu: &aŞifre Koruması Atlandı / Yetkili Girişi"
+  - " &8» &eAyrılmak için: &6/vcleave"
+  - ""
+  - "&8&m--------------------------------------------------"
+
+vc-leave-success: "&a[VoiceChat] &e{group} &aadlı ses grubundan/dinlemesinden başarıyla ayrıldınız."
+vc-move-success: "&a[VoiceChat] &e{target} &aadlı oyuncu &e{group} &aadlı gruba taşındı. &7(Yetkili: {staff})"
+vc-move-leave-success: "&a[VoiceChat] &e{target} &aadlı oyuncu ses grubundan çıkarıldı. &7(Yetkili: {staff})"
+
+vc-list-header: "&8&m----------------&r &6&lAKTİF SESLİ SOHBET GRUPLARI &8&m----------------"
+vc-list-empty: "&7Sunucuda şu anda aktif herhangi bir ses grubu bulunmuyor."
+vc-list-item: "&8» &e{group} &7({type}) {password} &8| &f{count} üye &7[{members}]"
+vc-list-footer: "&8&m--------------------------------------------------"
+
+vc-password-locked: "&c[🔒 Şifreli]"
+vc-password-open: "&a[🔓 Açık]"
+
+vc-join-usage: "&eKullanım: &6/vcjoin <grup_adı | oyuncu_adı> [--visible]\n&7Örnek: &f/vcjoin GizliOda &7(Gizli Dinleme - Sol üstte gözükmez)\n&7Örnek: &f/vcjoin Steve &7(Steve'in grubuna gizlice bağlanır)\n&7Örnek: &f/vcjoin GizliOda --visible &7(Normal görünür giriş)"
+vc-leave-usage: "&eKullanım: &6/vcleave"
+vc-spy-usage: "&eKullanım: &6/vcspy <grup_adı | oyuncu_adı | stop | talk [on|off]>"
+vc-list-usage: "&eKullanım: &6/vclist &7veya &6/vcgroups"
+vc-move-usage: "&eKullanım: &6/vcmove <oyuncu> <grup_adı | leave>"
+vc-info-usage: "&eKullanım: &6/vcinfo <grup_adı | oyuncu_adı>"
+
 # Süre Birimleri (Türkçe)
 time-permanent: "Kalıcı"
 time-days: "{days} gün {hours} saat"

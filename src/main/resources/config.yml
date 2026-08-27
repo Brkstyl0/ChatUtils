@@ -27,6 +27,13 @@ clearchat:
   # Temizlendikten sonra çalınacak ses
   sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
 
+# Simple Voice Chat Yetkili & Gizli Dinleme (Spy) Ayarları
+voicechat:
+  # /vcjoin kullanıldığında varsayılan olarak gizli mod (sol üstte gözükmeyen mod) kullanılsın mı?
+  stealth-by-default: true
+  # Gizli dinleme (Spy) esnasında yetkilinin ekranında Action Bar HUD çıksın mı?
+  actionbar-hud: true
+
 # Ceza ayarları
 punishments:
   # Mute atıldığında tüm sunucuya duyuru geçilsin mi? (true/false)

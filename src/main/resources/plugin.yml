@@ -84,6 +84,42 @@ commands:
     permission: chatutils.admin
     permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
     usage: /<command> reload
+  vcjoin:
+    description: Şifreli ve açık Simple Voice Chat ses gruplarına gizli veya görünür katılır.
+    aliases: [voicejoin, vcj]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <grup|oyuncu> [--visible]
+  vcleave:
+    description: Ses grubundan veya gizli dinleme modundan ayrılır.
+    aliases: [voiceleave, vcl]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command>
+  vcspy:
+    description: Şifreli ses gruplarını gizlice (sol üstte gözükmeden) dinler ve konuşma modunu yönetir.
+    aliases: [voicespy]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <grup|oyuncu|stop|talk>
+  vclist:
+    description: Sunucudaki tüm aktif ses gruplarını, şifre durumlarını ve üyelerini listeler.
+    aliases: [vcgroups, voicelist, vcg]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command>
+  vcmove:
+    description: Bir oyuncuyu belirtilen ses grubuna taşır veya gruptan çıkarır.
+    aliases: [voicemove]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <oyuncu> <grup|leave>
+  vcinfo:
+    description: Belirtilen grup veya oyuncu hakkında detaylı ses durumu verir.
+    aliases: [voiceinfo]
+    permission: chatutils.voicechat.admin
+    permission-message: '&c[ChatUtils] Bu komutu kullanmak için yetkiniz yok!'
+    usage: /<command> <grup|oyuncu>
 
 permissions:
   chatutils.admin:
@@ -112,6 +148,35 @@ permissions:
       chatutils.socialspy: true
       chatutils.spy: true
       chatutils.reload: true
+      chatutils.voicechat.admin: true
+      chatutils.vcjoin: true
+      chatutils.vcleave: true
+      chatutils.vcspy: true
+      chatutils.vcgroups: true
+      chatutils.vcmove: true
+      chatutils.vcinfo: true
+
+  chatutils.voicechat.admin:
+    description: Tüm Simple Voice Chat yetkili komutlarına (şifreli gruplara gizli katılma, liste, taşıma vb.) tam erişim sağlar.
+    default: op
+  chatutils.vcjoin:
+    description: /vcjoin komutunu kullanma yetkisi.
+    default: op
+  chatutils.vcleave:
+    description: /vcleave komutunu kullanma yetkisi.
+    default: op
+  chatutils.vcspy:
+    description: /vcspy komutunu kullanma yetkisi.
+    default: op
+  chatutils.vcgroups:
+    description: /vclist (/vcgroups) komutunu kullanma yetkisi.
+    default: op
+  chatutils.vcmove:
+    description: /vcmove komutunu kullanma yetkisi.
+    default: op
+  chatutils.vcinfo:
+    description: /vcinfo komutunu kullanma yetkisi.
+    default: op
 
   chatutils.mute:
     description: /mute komutunu kullanma yetkisi.

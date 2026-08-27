@@ -58,12 +58,15 @@ public final class ChatUtils extends JavaPlugin {
         // 2. Dinleyicileri (Listeners) kaldır
         org.bukkit.event.HandlerList.unregisterAll(this);
 
-        // 3. Vanish ve Disguise temizlikleri
+        // 3. Vanish, Disguise ve VoiceChat temizlikleri
         if (vanishManager != null) {
             vanishManager.shutdown();
         }
         if (disguiseManager != null) {
             disguiseManager.shutdown();
+        }
+        if (voiceChatManager != null) {
+            voiceChatManager.shutdown();
         }
 
         // 4. Verileri diske kaydet
@@ -90,6 +93,14 @@ public final class ChatUtils extends JavaPlugin {
         registerCommand("clearchat", new ClearChatCommand(this));
         registerCommand("duyuru", new BroadcastCommand(this));
         registerCommand("chatutils", new ChatUtilsCommand(this));
+
+        // Simple Voice Chat Yetkili & Şifresiz Grup Yönetim Komutları
+        registerCommand("vcjoin", new VoiceChatJoinCommand(this));
+        registerCommand("vcleave", new VoiceChatLeaveCommand(this));
+        registerCommand("vcspy", new VoiceChatSpyCommand(this));
+        registerCommand("vclist", new VoiceChatListCommand(this));
+        registerCommand("vcmove", new VoiceChatMoveCommand(this));
+        registerCommand("vcinfo", new VoiceChatInfoCommand(this));
     }
 
     private void registerCommand(String name, Object executor) {
